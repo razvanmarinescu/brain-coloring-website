@@ -63,42 +63,53 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
+          <br><br>
           <h2 class="text-black mb-4">Customise BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
 
      <div class="form-group row">
-      <div class="col-xs-2">
+      <div class="col-2">
         <label for="exampleFormControlSelect1">Brain Type</label>
         <select class="form-control" id="brainType">
           <option>Pial</option>
           <option>Inflated</option>
         </select>
       </div>
-      <div class="col-xs-3">
 
-        <label for="ex3">Colours (RGB)</label>
-        <input class="form-control" id="c1" type="text" placeholder="255,255,255">
-        <input class="form-control" id="c2" type="text" placeholder="255,255,255">
-        <input class="form-control" id="c3" type="text" placeholder="255,255,255 (optional)">
-        <input class="form-control" id="c4" type="text" placeholder="255,255,255 (optional)">
-        <input class="form-control" id="c5" type="text" placeholder="255,255,255 (optional)">
+
+
+       <div class="col-5">
+
+        <label for="ex2">Colours (RGB)</label>
+        <input class="form-control" id="c1" type="text" placeholder="1,1,1 (biomarker value 0)" >
+         <span class="help-block">Colour corresponding to input biomarker of 0</span><br><br>
+        <input class="form-control" id="c2" type="text" placeholder="1,1,1 (biomarker value 1)">
+         <span class="help-block">Colour corresponding to input biomarker of 1</span><br><br>
+
+        <input class="form-control" id="c3" type="text" placeholder="1,1,1 (optional, value 2)">
+        <input class="form-control" id="c4" type="text" placeholder="1,1,1 (optional, value 3)">
+        <input class="form-control" id="c5" type="text" placeholder="1,1,1 (optional, value 4)">
 
       </div>
-      <div class="col-xs-4">
-        <label for="ex3">col-xs-4</label>
-        <input class="form-control" id="ex3" type="text">
+      <div class="col-2">
+        <label for="ex3">Resolution</label>
+        <input class="form-control" id="res" type="text" placeholder="1200,900">
+      </div>
+
+       <div class="col-3">
+        <label for="ex3">Background color (RGB)</label>
+        <input class="form-control" id="backgroundCol" type="text" placeholder="1,1,1 (white)">
       </div>
     </div>
 
-    <div class="form-group" >
+      <p>For the colours above, the first colour can be for example white (1,1,1), and the subsequent color can be e.g. red (1,0,0). If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
 
-  </div>
-
+    Upload data file according to <a href="static/input_data.csv"> this template</a>:
     <form method=post enctype=multipart/form-data>
     <input type=file name=file>
-    <input type=submit value=Upload>
+    <input type=submit value=Submit>
   </form>
 
     </div>
