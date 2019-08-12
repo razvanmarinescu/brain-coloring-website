@@ -19,7 +19,9 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="/static/css/grayscale.min.css" rel="stylesheet">
+  <link href="/static/css/grayscale.css" rel="stylesheet">
+
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
 </head>
 
@@ -28,7 +30,6 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         Menu
         <i class="fas fa-bars"></i>
@@ -36,13 +37,10 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#about">About</a>
+            <a class="nav-link js-scroll-trigger" href="#customise">Customise</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#projects">Projects</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#signup">Contact</a>
+            <a class="nav-link js-scroll-trigger" href="#gallery">Gallery</a>
           </li>
         </ul>
       </div>
@@ -53,24 +51,56 @@
   <header class="masthead">
     <div class="container d-flex h-100 align-items-center">
       <div class="mx-auto text-center">
-        <h1 class="mx-auto my-0 text-uppercase">Grayscale</h1>
-        <h2 class="text-white-50 mx-auto mt-2 mb-5">A free, responsive, one page Bootstrap theme created by Start Bootstrap.</h2>
-        <a href="#about" class="btn btn-primary js-scroll-trigger">Get Started</a>
+        <h1 class="mx-auto my-0">BrainPainter</h1>
+        <h2 class="text-white-50 mx-auto mt-2 mb-5">A free software for visualisation of brain structures, biomarkers and associated pathological processes.</h2>
+        <a href="#customise" class="btn btn-primary js-scroll-trigger">Get Started</a>
       </div>
     </div>
   </header>
 
   <!-- Customise Section -->
-  <section id="about" class="about-section text-center">
+  <section id="customise" class="text-center">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
-          <h2 class="text-white mb-4">Built with Bootstrap 4</h2>
-          <p class="text-white-50">Grayscale is a free Bootstrap theme created by Start Bootstrap. It can be yours right now, simply download the template on
-            <a href="http://startbootstrap.com/template-overviews/grayscale/">the preview page</a>. The theme is open source, and you can use it for any purpose, personal or commercial.</p>
+          <h2 class="text-black mb-4">Customise BrainPainter</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
-      <img src="/static/img/ipad.png" class="img-fluid" alt="">
+
+     <div class="form-group row">
+      <div class="col-xs-2">
+        <label for="exampleFormControlSelect1">Brain Type</label>
+        <select class="form-control" id="brainType">
+          <option>Pial</option>
+          <option>Inflated</option>
+        </select>
+      </div>
+      <div class="col-xs-3">
+
+        <label for="ex3">Colours (RGB)</label>
+        <input class="form-control" id="c1" type="text" placeholder="255,255,255">
+        <input class="form-control" id="c2" type="text" placeholder="255,255,255">
+        <input class="form-control" id="c3" type="text" placeholder="255,255,255 (optional)">
+        <input class="form-control" id="c4" type="text" placeholder="255,255,255 (optional)">
+        <input class="form-control" id="c5" type="text" placeholder="255,255,255 (optional)">
+
+      </div>
+      <div class="col-xs-4">
+        <label for="ex3">col-xs-4</label>
+        <input class="form-control" id="ex3" type="text">
+      </div>
+    </div>
+
+    <div class="form-group" >
+
+  </div>
+
+    <form method=post enctype=multipart/form-data>
+    <input type=file name=file>
+    <input type=submit value=Upload>
+  </form>
+
     </div>
   </section>
 
@@ -81,7 +111,7 @@
       <!-- Featured Project Row -->
       <div class="row align-items-center no-gutters mb-4 mb-lg-5">
         <div class="col-xl-8 col-lg-7">
-          <img class="img-fluid mb-3 mb-lg-0" src="/static/img/bg-masthead.jpg" alt="">
+          <img class="img-fluid mb-3 mb-lg-0" src="/static/img/cortical-bright.png" alt="">
         </div>
         <div class="col-xl-4 col-lg-5">
           <div class="featured-text text-center text-lg-left">
@@ -222,6 +252,36 @@
 
   <!-- Custom scripts for this template -->
   <script src="/static/js/grayscale.min.js"></script>
+
+  <script>$(document).ready(function(){
+    var next = 1;
+    $(".add-more").click(function(e){
+        e.preventDefault();
+        var addto = "#field" + next;
+        var addRemove = "#field" + (next);
+        next = next + 1;
+        var newIn = '<input autocomplete="off" class="input form-control" id="field' + next + '" name="field' + next + '" type="text">';
+        var newInput = $(newIn);
+        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" >-</button></div><div id="field">';
+        var removeButton = $(removeBtn);
+        $(addto).after(newInput);
+        $(addRemove).after(removeButton);
+        $("#field" + next).attr('data-source',$(addto).attr('data-source'));
+        $("#count").val(next);
+
+            $('.remove-me').click(function(e){
+                e.preventDefault();
+                var fieldNum = this.id.charAt(this.id.length-1);
+                var fieldID = "#field" + fieldNum;
+                $(this).remove();
+                $(fieldID).remove();
+            });
+    });
+
+
+
+});
+</script>
 
 </body>
 
