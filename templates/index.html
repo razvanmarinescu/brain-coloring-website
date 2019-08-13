@@ -69,45 +69,45 @@
         </div>
       </div>
 
+    <form method=post enctype=multipart/form-data action=generated>
      <div class="form-group row">
       <div class="col-2">
         <label for="exampleFormControlSelect1">Brain Type</label>
-        <select class="form-control" id="brainType">
-          <option>Pial</option>
-          <option>Inflated</option>
+        <select class="form-control" id="brainType" name="brainType">
+          <option>pial</option>
+          <option>inflated</option>
         </select>
       </div>
 
 
-
-       <div class="col-5">
+      <div class="col-5">
 
         <label for="ex2">Colours (RGB)</label>
-        <input class="form-control" id="c1" type="text" placeholder="1,1,1 (biomarker value 0)" >
-         <span class="help-block">Colour corresponding to input biomarker of 0</span><br><br>
-        <input class="form-control" id="c2" type="text" placeholder="1,1,1 (biomarker value 1)">
-         <span class="help-block">Colour corresponding to input biomarker of 1</span><br><br>
+        <input class="form-control" id="c1" type="text" name="c1" placeholder="1,1,1 (biomarker value 0)" value="1,1,1">
+        <span class="help-block">Colour corresponding to input biomarker value 0</span><br><br>
+        <input class="form-control" id="c2" type="text" name="c2" placeholder="1,1,1 (biomarker value 1)" value="1,1,1">
+        <span class="help-block">Colour corresponding to input biomarker value 1</span><br><br>
 
-        <input class="form-control" id="c3" type="text" placeholder="1,1,1 (optional, value 2)">
-        <input class="form-control" id="c4" type="text" placeholder="1,1,1 (optional, value 3)">
-        <input class="form-control" id="c5" type="text" placeholder="1,1,1 (optional, value 4)">
+        <input class="form-control" id="c3" type="text" name="c3" placeholder="1,1,1 (optional, value 2)">
+        <input class="form-control" id="c4" type="text" name="c4" placeholder="1,1,1 (optional, value 3)">
+        <input class="form-control" id="c5" type="text" name="c5" placeholder="1,1,1 (optional, value 4)">
 
       </div>
       <div class="col-2">
         <label for="ex3">Resolution</label>
-        <input class="form-control" id="res" type="text" placeholder="1200,900">
+        <input class="form-control" id="res" type="text" name="resolution" placeholder="1200,900" value="1200,900">
       </div>
 
-       <div class="col-3">
+      <div class="col-3">
         <label for="ex3">Background color (RGB)</label>
-        <input class="form-control" id="backgroundCol" type="text" placeholder="1,1,1 (white)">
+        <input class="form-control" id="backgroundCol" name="backgroundCol" type="text" placeholder="1,1,1 (white)" value="1,1,1">
       </div>
     </div>
 
       <p>For the colours above, the first colour can be for example white (1,1,1), and the subsequent color can be e.g. red (1,0,0). If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
 
     Upload data file according to <a href="static/input_data.csv"> this template</a>:
-    <form method=post enctype=multipart/form-data>
+
     <input type=file name=file>
     <input type=submit value=Submit>
   </form>
@@ -115,56 +115,14 @@
     </div>
   </section>
 
-  <!-- Projects Section -->
-  <section id="projects" class="projects-section bg-light">
+  <!-- Gallery Section -->
+  <section id="gallery" class="projects-section bg-light text-center">
     <div class="container">
-
-      <!-- Featured Project Row -->
-      <div class="row align-items-center no-gutters mb-4 mb-lg-5">
-        <div class="col-xl-8 col-lg-7">
-          <img class="img-fluid mb-3 mb-lg-0" src="/static/img/cortical-bright.png" alt="">
-        </div>
-        <div class="col-xl-4 col-lg-5">
-          <div class="featured-text text-center text-lg-left">
-            <h4>Shoreline</h4>
-            <p class="text-black-50 mb-0">Grayscale is open source and MIT licensed. This means you can use it for any project - even commercial projects! Download it, customize it, and publish your website!</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project One Row -->
-      <div class="row justify-content-center no-gutters mb-5 mb-lg-0">
-        <div class="col-lg-6">
-          <img class="img-fluid" src="/static/img/demo-image-01.jpg" alt="">
-        </div>
-        <div class="col-lg-6">
-          <div class="bg-black text-center h-100 project">
-            <div class="d-flex h-100">
-              <div class="project-text w-100 my-auto text-center text-lg-left">
-                <h4 class="text-white">Misty</h4>
-                <p class="mb-0 text-white-50">An example of where you can put an image of a project, or anything else, along with a description.</p>
-                <hr class="d-none d-lg-block mb-0 ml-0">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project Two Row -->
-      <div class="row justify-content-center no-gutters">
-        <div class="col-lg-6">
-          <img class="img-fluid" src="/static/img/demo-image-02.jpg" alt="">
-        </div>
-        <div class="col-lg-6 order-lg-first">
-          <div class="bg-black text-center h-100 project">
-            <div class="d-flex h-100">
-              <div class="project-text w-100 my-auto text-center text-lg-right">
-                <h4 class="text-white">Mountains</h4>
-                <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well, try this theme on a small screen!</p>
-                <hr class="d-none d-lg-block mb-0 mr-0">
-              </div>
-            </div>
-          </div>
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4 ">Generated images</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
 

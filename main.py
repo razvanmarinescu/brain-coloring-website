@@ -6,8 +6,11 @@ from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = '/research/brain-coloring-website/uploads'
 ALLOWED_EXTENSIONS = {'csv'}
 
+TOKEN = open(os.path.expanduser('~/.flaskToken'), 'r').read()[:-1]
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = TOKEN
 
 from brainPainterRepo import config
 
@@ -37,54 +40,56 @@ def allowed_file(filename):
   return '.' in filename and \
     filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/temp', methods=['GET', 'POST'])
-def upload_file():
-  if request.method == 'POST':
-    # check if the post request has the file part
-    if 'file' not in request.files:
-      flash('No file part')
-      return redirect(request.url)
-    file = request.files['file']
-    # if user does not select file, browser also
-    # submit an empty part without filename
-    if file.filename == '':
-      flash('No selected file')
-      return redirect(request.url)
-    if file and allowed_file(file.filename):
-      import random
-      hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
-      filename = hash + '_' + secure_filename(file.filename)
+# @app.route('/temp', methods=['GET', 'POST'])
+# def upload_file():
+#   if request.method == 'POST':
+#     # check if the post request has the file part
+#     if 'file' not in request.files:
+#       flash('No file part')
+#       return redirect(request.url)
+#     file = request.files['file']
+#     # if user does not select file, browser also
+#     # submit an empty part without filename
+#     if file.filename == '':
+#       flash('No selected file')
+#       return redirect(request.url)
+#     if file and allowed_file(file.filename):
+#       import random
+#       hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+#       filename = hash + '_' + secure_filename(file.filename)
+#
+#       fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+#       # fullFilePath = '%s.csv' % (fullFilePath[:-4])
+#
+#       file.save(fullFilePath)
+#
+#       processFile(hash, fullFilePath)
+#
+#   return '''
+#   <!doctype html>
+#   <title>Upload new File</title>
+#   <h1>Upload new File</h1>
+#   <form method=post enctype=multipart/form-data>
+#     <input type=file name=file>
+#     <input type=submit value=Upload>
+#   </form>
+#   '''
 
-      fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-      # fullFilePath = '%s.csv' % (fullFilePath[:-4])
-
-      file.save(fullFilePath)
-
-      processFile(hash, fullFilePath)
-
-  return '''
-  <!doctype html>
-  <title>Upload new File</title>
-  <h1>Upload new File</h1>
-  <form method=post enctype=multipart/form-data>
-    <input type=file name=file>
-    <input type=submit value=Upload>
-  </form>
-  '''
-
-def processFile(hash, fullFilePath):
+def processFile(hash, fullFilePath, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                            BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap, CONFIG_FILE):
 
   OUTPUT_FOLDER = '../generated/%s' % hash
 
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap)
 
-  CONFIG_FILE = 'uploads/%s_config.py' % hash
+
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
 
-  cmd ='cd brainPainterRepo; configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+  cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
   print(cmd)
+  os.system('pwd')
   os.system(cmd)
 
   zipCmd = 'cd generated/%s; zip -r figures.zip *.png' % (hash)
@@ -114,12 +119,70 @@ def index():
       filename = hash + '_' + secure_filename(file.filename)
 
       fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-      # fullFilePath = '%s.csv' % (fullFilePath[:-4])
+
+      # file.save(fullFilePath)
+      # processFile(hash, fullFilePath)
+
+  # form = ReusableForm()
+
+  print(request.form)
+  print('lalalalaaa')
+  # brainType = request.form['brainType']
+  # print(brainType)
+
+  return render_template('index.html')
+
+
+
+@app.route('/generated', methods=['GET', 'POST'])
+def generated():
+  if request.method == 'POST':
+    # check if the post request has the file part
+    if 'file' not in request.files:
+      flash('No file part')
+      return redirect(request.url)
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    if file.filename == '':
+      flash('No selected file')
+      return redirect(request.url)
+    if file and allowed_file(file.filename):
+      import random
+      hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+      filename = hash + '_' + secure_filename(file.filename)
+
+      fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+      print(request.form)
+      print(request.form['c5'])
+
+      BRAIN_TYPE = request.form['brainType']
+      COLORS_RGB = parseCol(request.form['c1']) + parseCol(request.form['c2']) + parseCol(request.form['c3']) + \
+                   parseCol(request.form['c4']) + parseCol(request.form['c5'])
+      BACKGROUND_COLOR = parseCol(request.form['backgroundCol'])[0]
+      RESOLUTION = parseCol(request.form['resolution'], int)[0]
+      CONFIG_FILE = 'uploads/%s_%s_config.py' % (hash, BRAIN_TYPE)
+
+      print('BRAIN_TYPE', BRAIN_TYPE)
+      print('COLORS_RGB', COLORS_RGB)
+      print('BACKGROUND_COLOR', BACKGROUND_COLOR)
+      print('RESOLUTION', RESOLUTION)
+
+      print('lalalalaaa 2')
 
       file.save(fullFilePath)
+      processFile(hash, fullFilePath, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                            BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap, CONFIG_FILE)
 
-      processFile(hash, fullFilePath)
-    return render_template('index.html')
+  return render_template('index.html')
+
+def parseCol(strCol, convFunc=float):
+  if strCol != '':
+    return [tuple([convFunc(i) for i in strCol.split(',') ])]
+  else:
+    return []
+
 
 
 def createGalleryHtml(zipLocation):
@@ -391,24 +454,7 @@ function showSlides(n) {
 '''
 
 
-@app.route('/generated/')
-def file_downloads():
-	try:
-		return createGalleryHtml('39F1DD8350DAE7FB/figures.zip')
-	except Exception as e:
-		return str(e)
 
-# /generated/39F1DD8350DAE7FB/figures.zip
-
-# /download/figures.zip
-
-@app.route('/generated/<filename>', methods=['GET', 'POST'])
-def download(filename):
-    uploads = os.path.join(current_app.root_path, 'generated/' + filename.split('/')[0])
-    fileNameShort = filename.split('/')[1]
-    print('uploads', uploads)
-    print('fileNameShort', fileNameShort)
-    return send_from_directory(directory=uploads, filename=fileNameShort)
 
 
 from flask import send_from_directory
@@ -425,5 +471,11 @@ def uploaded_file(filename):
 # server.serve_forever()
 
 if __name__ == '__main__':
+
+    # app.secret_key = 'super secret key'
+    # app.config['SESSION_TYPE'] = 'filesystem'
+    #
+    # sess.init_app(app)
+
     app.debug = True
     app.run(host = '0.0.0.0', port=int("80"), debug=True)
