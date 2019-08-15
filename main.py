@@ -19,8 +19,8 @@ IMG_TYPE = config.IMG_TYPE
 COLORS_RGB =config.COLORS_RGB
 RESOLUTION = config.RESOLUTION
 BACKGROUND_COLOR = config.BACKGROUND_COLOR
-cortAreasIndexMap = config.cortAreasIndexMap
-subcortAreasIndexMap = config.subcortAreasIndexMap
+# cortAreasIndexMap = config.cortAreasIndexMap
+# subcortAreasIndexMap = config.subcortAreasIndexMap
 
 
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap):
