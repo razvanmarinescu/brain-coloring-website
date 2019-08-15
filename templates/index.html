@@ -23,6 +23,8 @@
 
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
+  <link href="/static/gallery.css" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -121,10 +123,73 @@
       <div class="row">
         <div class="col-lg-8 mx-auto">
           <br><br>
-          <h2 class="text-black mb-4 ">Generated images</h2>
+          {% if galleryDisabled == 'disabled' %}
+            <h2 class="text-black mb-4 ">Generated images (demo) - upload data to generate your own</h2>
+          {% else %}
+            <h2 class="text-black mb-4 ">Generated images</h2>
+          {% endif %}
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
+
+      <!----------- Gallery code --------------->
+
+      <!-- Images used to open the lightbox -->
+      <div class="row">
+        <div class="column">
+          {{figDesc[0]}}
+          <img src="{{figPath[0]}}"  style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow">
+        </div>
+        <div class="column">
+          {{figDesc[1]}}
+          <img src="{{figPath[1]}}"  style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow">
+        </div>
+      </div>
+
+      <!-- The Modal/Lightbox -->
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+        <span class="close cursor" onclick="closeModal()">&times;</span>
+
+          <div class="mySlides">
+            <div class="numbertext">1 / 2</div>
+            <img src="{{figPath[0]}}" style="width:100%">
+          </div>
+
+          <div class="mySlides">
+            <div class="numbertext">2 / 2</div>
+            <img src="{{figPath[1]}}" style="width:100%">
+          </div>
+
+          <!-- Next/previous controls -->
+          <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+          <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+          <!-- Caption text -->
+          <div class="caption-container">
+            <p id="caption"></p>
+          </div>
+
+          <!-- Thumbnail image controls -->
+          <div class="rowModal">
+            <div class="column">
+              <img class="demo" src="{{figPath[0]}}" style="width:100%" onclick="currentSlide(1)" alt="Nature">
+            </div><div class="column">
+              <img class="demo" src="{{figPath[1]}}" style="width:100%" onclick="currentSlide(2)" alt="Snow">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+         <div class="container" align="left">
+              <a href="{{zipLocation }}" target="blank"><button class='btn btn-default' {{galleryDisabled}}>Download!</button></a>
+         </div>
+
+
+  <!-- End of Gallery code-->
+
+
 
     </div>
   </section>
@@ -251,6 +316,58 @@
 
 });
 </script>
+
+      <script>
+      function openModal() {
+        document.getElementById("myModal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+      }
+
+      var slideIndex = 1;
+      showSlides(slideIndex);
+
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+
+      function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("demo");
+        var captionText = document.getElementById("caption");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+        captionText.innerHTML = dots[slideIndex-1].alt;
+      }
+      $(document).mouseup(function(e){
+            if($(e.target).parents('.modal-content').length==0 && !$(e.target).is('.modal-content')){
+                $('.modal').css('display', 'none');
+            }
+        });
+      </script>
+
+
+
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
+
 
 </body>
 

@@ -125,12 +125,13 @@ def index():
 
   # form = ReusableForm()
 
-  print(request.form)
-  print('lalalalaaa')
-  # brainType = request.form['brainType']
-  # print(brainType)
+  figPath = [0, 0]
+  figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
+  figPath[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
+  figDesc = ['Image 1 - inner', 'Image 2 - inner']
+  zipLocation = os.path.join('../static/generated', '39F1DD8350DAE7FB/figures.zip')
 
-  return render_template('index.html')
+  return render_template('index.html', figPath = figPath, figDesc = figDesc, galleryDisabled='disabled')
 
 
 
@@ -175,6 +176,12 @@ def generated():
       processFile(hash, fullFilePath, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap, CONFIG_FILE)
 
+  # figPath = [0, 0]
+  # figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
+  # figPath[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
+  # figDesc = ['Image 1 - inner', 'Image 2 - inner']
+  # zipLocation = os.path.join('../static/generated', '39F1DD8350DAE7FB/figures.zip')
+
   return render_template('index.html')
 
 def parseCol(strCol, convFunc=float):
@@ -186,7 +193,7 @@ def parseCol(strCol, convFunc=float):
 
 
 def createGalleryHtml(zipLocation):
-  figPath = os.path.join('../static', '39F1DD8350DAE7FB/cortical-back_0.png')
+
   return '''
 
 <!doctype html>
