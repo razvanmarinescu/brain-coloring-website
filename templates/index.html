@@ -71,18 +71,31 @@
         </div>
       </div>
 
+
     <form method=post enctype=multipart/form-data action=generated>
      <div class="form-group row">
-      <div class="col-2">
+      <div class="col-3">
+        <label for="exampleFormControlSelect1">Atlas</label>
+        <select class="form-control" id="atlas" name="atlas">
+          <option>Desikan-Killiany</option>
+          <option>Destrieux</option>
+          <option>Tourville</option>
+        </select>
+
+        <br><br>
+
         <label for="exampleFormControlSelect1">Brain Type</label>
         <select class="form-control" id="brainType" name="brainType">
           <option>pial</option>
           <option>inflated</option>
+          <option>white</option>
         </select>
+
+
       </div>
 
 
-      <div class="col-5">
+      <div class="col-3">
 
         <label for="ex2">Colours (RGB)</label>
         <input class="form-control" id="c1" type="text" name="c1" placeholder="1,1,1 (biomarker value 0)" value="1,1,1">
@@ -108,7 +121,12 @@
 
       <p>For the colours above, the first colour can be for example white (1,1,1), and the subsequent color can be e.g. red (1,0,0). If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
 
-    Upload data file according to <a href="static/input_data.csv"> this template</a>:
+    Upload input data file (.csv) according to these templates:
+      <ul>
+        <li><a href="static/DK_template.csv"> Desikan-Killiany template</a>:</li>
+        <li><a href="static/Destrieux_template.csv"> Destrieux template</a>:</li>
+        <li><a href="static/Tourville_template.csv"> Tourville template</a>:</li>
+      </ul>
 
     <input type=file name=file>
     <input type=submit value=Submit>

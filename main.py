@@ -19,20 +19,21 @@ IMG_TYPE = config.IMG_TYPE
 COLORS_RGB =config.COLORS_RGB
 RESOLUTION = config.RESOLUTION
 BACKGROUND_COLOR = config.BACKGROUND_COLOR
-# cortAreasIndexMap = config.cortAreasIndexMap
-# subcortAreasIndexMap = config.subcortAreasIndexMap
 
 
-def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap):
-  text  = "INPUT_FILE='%s'" % INPUT_FILE + '\n\n'
+def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
+  text = "ATLAS='%s'" % ATLAS + '\n\n'
+  text += "INPUT_FILE='%s'" % INPUT_FILE + '\n\n'
   text += "OUTPUT_FOLDER = '%s'" % OUTPUT_FOLDER + '\n\n'
   text += "BRAIN_TYPE = '%s'" % BRAIN_TYPE + '\n\n'
   text += "IMG_TYPE = '%s'" % IMG_TYPE + '\n\n'
   text += "COLORS_RGB = %s" % str(COLORS_RGB) + '\n\n'
   text += "RESOLUTION = %s" % str(RESOLUTION) + '\n\n'
   text += "BACKGROUND_COLOR = %s" % str(BACKGROUND_COLOR) + '\n\n'
-  text += "cortAreasIndexMap = %s" % str(cortAreasIndexMap) + '\n\n'
-  text += "subcortAreasIndexMap = %s" % str(subcortAreasIndexMap) + '\n\n'
+  text += "cortAreasIndexMapDK = %s" % str(config.cortAreasIndexMapDK) + '\n\n'
+  text += "cortAreasIndexMapDestrieux = %s" % str(config.cortAreasIndexMapDestrieux) + '\n\n'
+  text += "cortAreasIndexMapTourville = %s" % str(config.cortAreasIndexMapTourville) + '\n\n'
+  text += "subcortAreasIndexMap = %s" % str(config.subcortAreasIndexMap) + '\n\n'
 
   return text
 
@@ -75,13 +76,13 @@ def allowed_file(filename):
 #   </form>
 #   '''
 
-def processFile(hash, fullFilePath, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                            BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap, CONFIG_FILE):
+def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                            BACKGROUND_COLOR, CONFIG_FILE):
 
   OUTPUT_FOLDER = '../generated/%s' % hash
 
-  text = generateConfigText(fullFilePath, OUTPUT_FOLDER, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                            BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap)
+  text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                            BACKGROUND_COLOR)
 
 
   with open(CONFIG_FILE, 'w') as f:
@@ -125,7 +126,7 @@ def index():
 
   # form = ReusableForm()
 
-  figPath = [0, 0]
+    = [0, 0]
   figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
   figPath[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
   figDesc = ['Image 1 - inner', 'Image 2 - inner']
@@ -164,6 +165,11 @@ def generated():
       BACKGROUND_COLOR = parseCol(request.form['backgroundCol'])[0]
       RESOLUTION = parseCol(request.form['resolution'], int)[0]
       CONFIG_FILE = 'uploads/%s_%s_config.py' % (hash, BRAIN_TYPE)
+      ATLAS = request.form['atlas']
+      if ATLAS == 'Desikan-Killiany':
+        ATLAS = 'DK'
+
+
 
       print('BRAIN_TYPE', BRAIN_TYPE)
       print('COLORS_RGB', COLORS_RGB)
@@ -173,8 +179,8 @@ def generated():
       print('lalalalaaa 2')
 
       file.save(fullFilePath)
-      processFile(hash, fullFilePath, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                            BACKGROUND_COLOR, cortAreasIndexMap, subcortAreasIndexMap, CONFIG_FILE)
+      processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                            BACKGROUND_COLOR, CONFIG_FILE)
 
   # figPath = [0, 0]
   # figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
