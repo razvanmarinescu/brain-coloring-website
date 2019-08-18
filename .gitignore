@@ -10,4 +10,4 @@ static/scss/_about.scss
 templates/index.html.bck
 to_delete/
 uploads/
-
+.env
