@@ -1,0 +1,13 @@
+static/generated/
+brainPainterRepo
+generated
+.idea/
+__pycache__/
+dist/
+flaskr.egg-info/
+static/npm-debug.log
+static/scss/_about.scss
+templates/index.html.bck
+to_delete/
+uploads/
+

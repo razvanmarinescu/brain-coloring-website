@@ -2,8 +2,13 @@
 import os
 from flask import *
 from werkzeug.utils import secure_filename
+import glob
+# from flaskext.markdown import Markdown
+from flask_misaka import Misaka
+import numpy as np
 
 UPLOAD_FOLDER = '/research/brain-coloring-website/uploads'
+REPO_DIR = os.getcwd()
 ALLOWED_EXTENSIONS = {'csv'}
 
 TOKEN = open(os.path.expanduser('~/.flaskToken'), 'r').read()[:-1]
@@ -11,6 +16,10 @@ TOKEN = open(os.path.expanduser('~/.flaskToken'), 'r').read()[:-1]
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = TOKEN
+# Markdown(app,safe_mode=False,
+#               output_format='html5')
+Misaka(app, fenced_code=True, tables=True, quote=True, autolink=True, math=True, math_explicit=True, highlight=True)
+
 
 from brainPainterRepo import config
 
@@ -41,40 +50,6 @@ def allowed_file(filename):
   return '.' in filename and \
     filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# @app.route('/temp', methods=['GET', 'POST'])
-# def upload_file():
-#   if request.method == 'POST':
-#     # check if the post request has the file part
-#     if 'file' not in request.files:
-#       flash('No file part')
-#       return redirect(request.url)
-#     file = request.files['file']
-#     # if user does not select file, browser also
-#     # submit an empty part without filename
-#     if file.filename == '':
-#       flash('No selected file')
-#       return redirect(request.url)
-#     if file and allowed_file(file.filename):
-#       import random
-#       hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
-#       filename = hash + '_' + secure_filename(file.filename)
-#
-#       fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#       # fullFilePath = '%s.csv' % (fullFilePath[:-4])
-#
-#       file.save(fullFilePath)
-#
-#       processFile(hash, fullFilePath)
-#
-#   return '''
-#   <!doctype html>
-#   <title>Upload new File</title>
-#   <h1>Upload new File</h1>
-#   <form method=post enctype=multipart/form-data>
-#     <input type=file name=file>
-#     <input type=submit value=Upload>
-#   </form>
-#   '''
 
 def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR, CONFIG_FILE):
@@ -93,8 +68,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   os.system('pwd')
   os.system(cmd)
 
-  zipCmd = 'cd generated/%s; zip -r figures.zip *.png' % (hash)
-  os.system(zipCmd)
+
 
   return 'File uploaded successfully'
 
@@ -126,13 +100,21 @@ def index():
 
   # form = ReusableForm()
 
-    = [0, 0]
-  figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
-  figPath[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
-  figDesc = ['Image 1 - inner', 'Image 2 - inner']
-  zipLocation = os.path.join('../static/generated', '39F1DD8350DAE7FB/figures.zip')
+  figPaths = [0, 0, 0, 0, 0, 0]
+  demoHash = '385B81CB7778C9BF'
+  figPaths[0] = '../static/generated/%s/Image_1_cortical-outer.png' % demoHash
+  figPaths[1] = '../static/generated/%s/Image_1_cortical-inner.png' % demoHash
+  figPaths[2] = '../static/generated/%s/Image_1_subcortical.png' % demoHash
+  figPaths[3] = '../static/generated/%s/Image_2_cortical-outer.png' % demoHash
+  figPaths[4] = '../static/generated/%s/Image_2_cortical-inner.png' % demoHash
+  figPaths[5] = '../static/generated/%s/Image_2_subcortical.png' % demoHash
 
-  return render_template('index.html', figPath = figPath, figDesc = figDesc, galleryDisabled='disabled')
+
+  figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+  figDescsShort = [x[:17] for x in figDescs]
+  zipLocation = '../static/generated/%s/figures.zip' % demoHash
+
+  return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
 
 
@@ -154,7 +136,7 @@ def generated():
       hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
       filename = hash + '_' + secure_filename(file.filename)
 
-      fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
 
       print(request.form)
       print(request.form['c5'])
@@ -163,8 +145,10 @@ def generated():
       COLORS_RGB = parseCol(request.form['c1']) + parseCol(request.form['c2']) + parseCol(request.form['c3']) + \
                    parseCol(request.form['c4']) + parseCol(request.form['c5'])
       BACKGROUND_COLOR = parseCol(request.form['backgroundCol'])[0]
-      RESOLUTION = parseCol(request.form['resolution'], int)[0]
-      CONFIG_FILE = 'uploads/%s_%s_config.py' % (hash, BRAIN_TYPE)
+      RESOLUTION = parseCommaSepStr(request.form['resolution'], int)[0]
+      # asda
+
+
       ATLAS = request.form['atlas']
       if ATLAS == 'Desikan-Killiany':
         ATLAS = 'DK'
@@ -178,24 +162,56 @@ def generated():
 
       print('lalalalaaa 2')
 
-      file.save(fullFilePath)
-      processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                            BACKGROUND_COLOR, CONFIG_FILE)
 
-  # figPath = [0, 0]
-  # figPath[0] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_0.png')
-  # figPath[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
-  # figDesc = ['Image 1 - inner', 'Image 2 - inner']
-  # zipLocation = os.path.join('../static/generated', '39F1DD8350DAE7FB/figures.zip')
+      EXP_DIR = '%s/static/generated/%s' % (REPO_DIR, hash)
+      fullFilePath = os.path.join(EXP_DIR, filename)
+      print('fullFilePath', fullFilePath)
+      os.system('mkdir -p %s' % EXP_DIR)
+      file.save(fullFilePath)
+
+      for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
+        CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
+        processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                              BACKGROUND_COLOR, CONFIG_FILE)
+
+      zipCmd = 'cd generated/%s; zip -r figures.zip *.png' % hash
+      os.system(zipCmd)
+
+      OUTPUT_FOLDER = 'generated/%s' % (hash)
+
+      # figPaths = [0, 0, 0]
+      # figPaths[0] = os.path.join('../static/generated', '%s/cortical-back_0.png')
+      # figPaths[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
+      # figPaths[2] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
+
+      figPaths = glob.glob("%s/*.png" % EXP_DIR)
+      figPaths = list(np.sort(figPaths))
+
+      figPaths = ['../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
+
+      figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+      figDescsShort = [x[:17] for x in figDescs]
+      print('figPaths', figPaths)
+      print('figDescs', figDescs)
+      # asda
+      zipLocation = os.path.join('../static/generated/%s' % hash, 'figures.zip')
+
+      return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
   return render_template('index.html')
 
-def parseCol(strCol, convFunc=float):
+def parseCommaSepStr(strCol, convFunc=float):
   if strCol != '':
     return [tuple([convFunc(i) for i in strCol.split(',') ])]
   else:
     return []
 
+def parseCol(strCol):
+  print(strCol)
+  rgbCol = tuple(int(strCol[i:i+2], 16) for i in (0, 2, 4))
+  rgbCol = (float(rgbCol[0])/255, float(rgbCol[1])/255, float(rgbCol[2])/255)
+  print(rgbCol)
+  return [rgbCol]
 
 
 def createGalleryHtml(zipLocation):
@@ -368,10 +384,10 @@ img.hover-shadow {
 <!-- Images used to open the lightbox -->
 <div class="row">
   <div class="column">
-    <img src="''' + figPath + '''"  style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow">
+    <img src="''' + figPaths + '''"  style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow">
   </div>
   <div class="column">
-    <img src="''' + figPath + '''"  style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow">
+    <img src="''' + figPaths + '''"  style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow">
   </div>
 </div>
 
@@ -382,12 +398,12 @@ img.hover-shadow {
 
     <div class="mySlides">
       <div class="numbertext">1 / 2</div>
-      <img src="''' + figPath + '''" style="width:100%">
+      <img src="''' + figPaths + '''" style="width:100%">
     </div>
 
     <div class="mySlides">
       <div class="numbertext">2 / 2</div>
-      <img src="''' + figPath + '''" style="width:100%">
+      <img src="''' + figPaths + '''" style="width:100%">
     </div>
 
     <!-- Next/previous controls -->
@@ -402,9 +418,9 @@ img.hover-shadow {
     <!-- Thumbnail image controls -->
     <div class="rowModal">
       <div class="column">
-        <img class="demo" src="''' + figPath + '''" style="width:100%" onclick="currentSlide(1)" alt="Nature">
+        <img class="demo" src="''' + figPaths + '''" style="width:100%" onclick="currentSlide(1)" alt="Nature">
       </div><div class="column">
-        <img class="demo" src="''' + figPath + '''" style="width:100%" onclick="currentSlide(2)" alt="Snow">
+        <img class="demo" src="''' + figPaths + '''" style="width:100%" onclick="currentSlide(2)" alt="Snow">
       </div>
     </div>
   </div>

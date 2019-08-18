@@ -3,12 +3,23 @@
 
 <head>
 
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145859009-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145859009-1');
+  </script>
+
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Grayscale - Start Bootstrap Theme</title>
+  <title>BrainPainter - Visualisation of Brain Structures, Biomarkers and Associated Pathological Processes.</title>
 
   <!-- Bootstrap core CSS -->
   <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -39,10 +50,16 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#customise">Customise</a>
+            <a class="nav-link js-scroll-trigger" href="#run">Run</a>
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#gallery">Gallery</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#examples">Example Uses</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use</a>
           </li>
         </ul>
       </div>
@@ -55,21 +72,26 @@
       <div class="mx-auto text-center">
         <h1 class="mx-auto my-0">BrainPainter</h1>
         <h2 class="text-white-50 mx-auto mt-2 mb-5">A free software for visualisation of brain structures, biomarkers and associated pathological processes.</h2>
-        <a href="#customise" class="btn btn-primary js-scroll-trigger">Get Started</a>
+        <a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a>
       </div>
     </div>
   </header>
 
+
+  <script src="static/jscolor.js"></script>
+
   <!-- Customise Section -->
-  <section id="customise" class="text-center">
+  <section id="run">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
           <br><br>
-          <h2 class="text-black mb-4">Customise BrainPainter</h2>
+          <h2 class="text-black mb-4 text-center">Run BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
+
+
 
 
     <form method=post enctype=multipart/form-data action=generated>
@@ -98,14 +120,24 @@
       <div class="col-3">
 
         <label for="ex2">Colours (RGB)</label>
-        <input class="form-control" id="c1" type="text" name="c1" placeholder="1,1,1 (biomarker value 0)" value="1,1,1">
+        <br>Fill-in at least the first two colours.
+        <br><br>
+<!--        <input class="form-control" id="c1" type="text" name="c1" placeholder="1,1,1 (biomarker value 0)" value="1,1,1">-->
+        <input class="jscolor" id="c1" name="c1" value="FFFFFF">
         <span class="help-block">Colour corresponding to input biomarker value 0</span><br><br>
-        <input class="form-control" id="c2" type="text" name="c2" placeholder="1,1,1 (biomarker value 1)" value="1,1,1">
+
+        <input class="jscolor" id="c2" name="c2" value="FFFF00">
         <span class="help-block">Colour corresponding to input biomarker value 1</span><br><br>
 
-        <input class="form-control" id="c3" type="text" name="c3" placeholder="1,1,1 (optional, value 2)">
-        <input class="form-control" id="c4" type="text" name="c4" placeholder="1,1,1 (optional, value 3)">
-        <input class="form-control" id="c5" type="text" name="c5" placeholder="1,1,1 (optional, value 4)">
+        <input class="jscolor" id="c3" name="c3" value="FF9100">
+        <span class="help-block">Colour corresponding to input biomarker value 2</span><br><br>
+
+        <input class="jscolor" id="c4" name="c4" value="FF0000">
+        <span class="help-block">Colour corresponding to input biomarker value 3</span><br><br>
+
+        <input class="jscolor" id="c5" name="c5" value="FF0000">
+        <span class="help-block">Colour corresponding to input biomarker value 4</span><br><br>
+
 
       </div>
       <div class="col-2">
@@ -115,11 +147,11 @@
 
       <div class="col-3">
         <label for="ex3">Background color (RGB)</label>
-        <input class="form-control" id="backgroundCol" name="backgroundCol" type="text" placeholder="1,1,1 (white)" value="1,1,1">
+        <input class="jscolor" id="backgroundCol" name="backgroundCol" value="FFFFFF">
       </div>
     </div>
 
-      <p>For the colours above, the first colour can be for example white (1,1,1), and the subsequent color can be e.g. red (1,0,0). If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
+      <p>If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
 
     Upload input data file (.csv) according to these templates:
       <ul>
@@ -129,22 +161,36 @@
       </ul>
 
     <input type=file name=file>
-    <input type=submit value=Submit>
+    <input type=submit value="Generate">
   </form>
+      <br>Processing usually takes around 15 seconds for each brain (set of 3 images with different viewpoints).
 
     </div>
   </section>
+
+
 
   <!-- Gallery Section -->
   <section id="gallery" class="projects-section bg-light text-center">
     <div class="container">
       <div class="row">
+<!--        <a href="{{ url_for('.index', _anchor='gallery') }}">Anchor</a>-->
+        <a name="gallery"></a>
         <div class="col-lg-8 mx-auto">
           <br><br>
           {% if galleryDisabled == 'disabled' %}
             <h2 class="text-black mb-4 ">Generated images (demo) - upload data to generate your own</h2>
+
+
+
           {% else %}
             <h2 class="text-black mb-4 ">Generated images</h2>
+            <p align="left">  The following images were generated on:
+            <script>
+              var d = new Date();
+              document.write(d.toLocaleString());
+            </script><br>
+            </p>
           {% endif %}
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -152,32 +198,32 @@
 
       <!----------- Gallery code --------------->
 
+
       <!-- Images used to open the lightbox -->
       <div class="row">
-        <div class="column">
-          {{figDesc[0]}}
-          <img src="{{figPath[0]}}"  style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow">
-        </div>
-        <div class="column">
-          {{figDesc[1]}}
-          <img src="{{figPath[1]}}"  style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow">
-        </div>
+        {% for i in range(figPaths|length): %}
+          <div class="column">
+            {{figDescsShort[i]}}
+            <img src="{{figPaths[i]}}"  style="width:100%" onclick="openModal();currentSlide({{i+1}})" class="hover-shadow">
+          </div>
+        {% endfor %}
       </div>
 
       <!-- The Modal/Lightbox -->
       <div id="myModal" class="modal">
         <div class="modal-content">
         <span class="close cursor" onclick="closeModal()">&times;</span>
+          {% for i in range(figPaths|length): %}
+            <div class="mySlides">
+              <div class="numbertext">{{i+1}} / {{figPaths|length}}</div>
+              <img src="{{figPaths[i]}}" style="width:100%">
+            </div>
+          {% endfor %}
 
-          <div class="mySlides">
-            <div class="numbertext">1 / 2</div>
-            <img src="{{figPath[0]}}" style="width:100%">
-          </div>
-
-          <div class="mySlides">
-            <div class="numbertext">2 / 2</div>
-            <img src="{{figPath[1]}}" style="width:100%">
-          </div>
+<!--          <div class="mySlides">-->
+<!--            <div class="numbertext">2 / 2</div>-->
+<!--            <img src="{{figPaths[1]}}" style="width:100%">-->
+<!--          </div>-->
 
           <!-- Next/previous controls -->
           <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
@@ -190,97 +236,186 @@
 
           <!-- Thumbnail image controls -->
           <div class="rowModal">
-            <div class="column">
-              <img class="demo" src="{{figPath[0]}}" style="width:100%" onclick="currentSlide(1)" alt="Nature">
-            </div><div class="column">
-              <img class="demo" src="{{figPath[1]}}" style="width:100%" onclick="currentSlide(2)" alt="Snow">
-            </div>
+            {% for i in range(figPaths|length): %}
+              <div class="column">
+                <img class="demo" src="{{figPaths[i]}}" style="width:100%" onclick="currentSlide(1)" alt="{{figDescs[i]}}">
+              </div>
+            {% endfor %}
           </div>
         </div>
       </div>
 
 
-         <div class="container" align="left">
-              <a href="{{zipLocation }}" target="blank"><button class='btn btn-default' {{galleryDisabled}}>Download!</button></a>
+        <br><div class="container" align="left">
+              <a href="{{zipLocation }}" target="blank"><button class='btn btn-default'>Download!</button></a>
          </div>
 
-
+      {% if galleryDisabled != 'disabled' %}
+      <br><p align="left">Note: If the images are not good, change the settings and regenerate them. </p>
   <!-- End of Gallery code-->
+      {% endif %}
 
+<!--   <script>-->
+<!--   var converter = new showdown.Converter(),-->
+<!--    text      = '# hello, markdown!',-->
+<!--    html      = converter.makeHtml(text);-->
+<!--    document.write(html)-->
+<!--   </script>-->
+
+
+            <br><br><div align="left">
+       <p  align="left">
+
+  {% filter markdown %}
+
+   If you find the BrainPainter useful, I would appreciate if you could cite it at the end of the figure caption, along these lines: *"Fig 1. ... Drawings generated using BrainPainter [ref]."*
+
+
+    @article{marinescu2019brain,
+      title={BrainPainter: A software for the visualisation of brain structures, biomarkers and associated pathological processes},
+      author={Marinescu, Razvan and Alexander, Daniel and Golland, Polina},
+      journal={arXiv preprint arXiv:1905.08627},
+      year={2019}
+    }
+  {% endfilter %}
+       </p>
+      </div>
 
 
     </div>
   </section>
 
-  <!-- Signup Section -->
-  <section id="signup" class="signup-section">
+  <!-- Example Uses Section -->
+  <section id="examples" class="text-center">
     <div class="container">
       <div class="row">
-        <div class="col-md-10 col-lg-8 mx-auto text-center">
-
-          <i class="far fa-paper-plane fa-2x mb-2 text-white"></i>
-          <h2 class="text-white mb-5">Subscribe to receive updates!</h2>
-
-          <form class="form-inline d-flex">
-            <input type="email" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputEmail" placeholder="Enter email address...">
-            <button type="submit" class="btn btn-primary mx-auto">Subscribe</button>
-          </form>
-
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4">Example uses of BrainPainter</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
       </div>
+
+
+     <div class="text-center" >
+        <img src="static/young_sustain.png"  style="width:60%" align="middle"><br><br>
+       Brain images used by <a href="https://www.nature.com/articles/s41467-018-05892-0">Young et al., Nature Comms., 2018<a/><br><br><br>
+
+        <img src="static/peter_subcortical.jpg"  style="width:60%"><br><br>
+       Subcortical regions used by <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/acn3.558">Wijeratne et al, Ann. Clin. Neurol., 2018</a>.<br><br><br>
+
+
+     </div>
+
     </div>
   </section>
+
+
+
+
+  <!-- Advanced use Section -->
+  <section id="advanced" class="projects-section bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4 text-center">Advanced Use</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
+        </div>
+      </div>
+
+    <p>For more customisation, please run straight from the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>. No installation is required, as the program is already bundled within a docker container. The following aspects can be customise there:
+      <ul>
+          <li class="nav-item">
+            the atlas: any custom atlas can be used by mapping its regions to the regions of one of the three pre-defined atlases (DK, Destrieux, Tourville)
+          </li>
+          <li class="nav-item">
+            lightning conditions/ camera viewpoint: can be done within the python source code.
+          </li>
+
+        </ul>
+
+
+    </p>
+
+
+
+    </div>
+  </section>
+
+
+
+
+
+<!--  &lt;!&ndash; Signup Section &ndash;&gt;-->
+<!--  <section id="signup" class="signup-section">-->
+<!--    <div class="container">-->
+<!--      <div class="row">-->
+<!--        <div class="col-md-10 col-lg-8 mx-auto text-center">-->
+
+<!--          <i class="far fa-paper-plane fa-2x mb-2 text-white"></i>-->
+<!--          <h2 class="text-white mb-5">Subscribe to receive updates!</h2>-->
+
+<!--          <form class="form-inline d-flex">-->
+<!--            <input type="email" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputEmail" placeholder="Enter email address...">-->
+<!--            <button type="submit" class="btn btn-primary mx-auto">Subscribe</button>-->
+<!--          </form>-->
+
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
 
   <!-- Contact Section -->
   <section class="contact-section bg-black">
     <div class="container">
 
-      <div class="row">
+<!--      <div class="row">-->
 
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="card py-4 h-100">
-            <div class="card-body text-center">
-              <i class="fas fa-map-marked-alt text-primary mb-2"></i>
-              <h4 class="text-uppercase m-0">Address</h4>
-              <hr class="my-4">
-              <div class="small text-black-50">4923 Market Street, Orlando FL</div>
-            </div>
-          </div>
-        </div>
+<!--        <div class="col-md-4 mb-3 mb-md-0">-->
+<!--          <div class="card py-4 h-100">-->
+<!--            <div class="card-body text-center">-->
+<!--              <i class="fas fa-map-marked-alt text-primary mb-2"></i>-->
+<!--              <h4 class="text-uppercase m-0">Address</h4>-->
+<!--              <hr class="my-4">-->
+<!--              <div class="small text-black-50">4923 Market Street, Orlando FL</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="card py-4 h-100">
-            <div class="card-body text-center">
-              <i class="fas fa-envelope text-primary mb-2"></i>
-              <h4 class="text-uppercase m-0">Email</h4>
-              <hr class="my-4">
-              <div class="small text-black-50">
-                <a href="#">hello@yourdomain.com</a>
-              </div>
-            </div>
-          </div>
-        </div>
+<!--        <div class="col-md-4 mb-3 mb-md-0">-->
+<!--          <div class="card py-4 h-100">-->
+<!--            <div class="card-body text-center">-->
+<!--              <i class="fas fa-envelope text-primary mb-2"></i>-->
+<!--              <h4 class="text-uppercase m-0">Email</h4>-->
+<!--              <hr class="my-4">-->
+<!--              <div class="small text-black-50">-->
+<!--                <a href="#">hello@yourdomain.com</a>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="card py-4 h-100">
-            <div class="card-body text-center">
-              <i class="fas fa-mobile-alt text-primary mb-2"></i>
-              <h4 class="text-uppercase m-0">Phone</h4>
-              <hr class="my-4">
-              <div class="small text-black-50">+1 (555) 902-8832</div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!--        <div class="col-md-4 mb-3 mb-md-0">-->
+<!--          <div class="card py-4 h-100">-->
+<!--            <div class="card-body text-center">-->
+<!--              <i class="fas fa-mobile-alt text-primary mb-2"></i>-->
+<!--              <h4 class="text-uppercase m-0">Phone</h4>-->
+<!--              <hr class="my-4">-->
+<!--              <div class="small text-black-50">+1 (555) 902-8832</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="social d-flex justify-content-center">
-        <a href="#" class="mx-2">
+        <a href="https://twitter.com/RazMarinescu" class="mx-2">
           <i class="fab fa-twitter"></i>
         </a>
-        <a href="#" class="mx-2">
-          <i class="fab fa-facebook-f"></i>
-        </a>
-        <a href="#" class="mx-2">
+<!--        <a href="#" class="mx-2">-->
+<!--          <i class="fab fa-facebook-f">https://www.facebook.com/mrazvan22</i>-->
+<!--        </a>-->
+        <a href="https://github.com/mrazvan22/brain-coloring" class="mx-2">
           <i class="fab fa-github"></i>
         </a>
       </div>
@@ -291,7 +426,8 @@
   <!-- Footer -->
   <footer class="bg-black small text-center text-white-50">
     <div class="container">
-      Copyright &copy; Your Website 2019
+      Copyright &copy; Razvan Marinescu<br>
+      BrainPainter is free and open source software licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en_GB">Creative Commons BY-SA license</a> .
     </div>
   </footer>
 
@@ -383,7 +519,21 @@
 
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
+      {% if galleryDisabled != 'disabled' %}
+        <script> window.location.hash="gallery"; </script>
+      {% endif %}
 
+    <script>// For todays date;
+Date.prototype.today = function () {
+    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
+}
+
+// For the time now
+Date.prototype.timeNow = function () {
+     return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}</script>
+
+<!--<script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.1/dist/showdown.min.js"></script>-->
 
 
 
