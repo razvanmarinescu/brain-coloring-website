@@ -101,18 +101,19 @@ def index():
   # form = ReusableForm()
 
   figPaths = [0, 0, 0, 0, 0, 0]
-  demoHash = '385B81CB7778C9BF'
-  figPaths[0] = '../static/generated/%s/Image_1_cortical-outer.png' % demoHash
-  figPaths[1] = '../static/generated/%s/Image_1_cortical-inner.png' % demoHash
-  figPaths[2] = '../static/generated/%s/Image_1_subcortical.png' % demoHash
-  figPaths[3] = '../static/generated/%s/Image_2_cortical-outer.png' % demoHash
-  figPaths[4] = '../static/generated/%s/Image_2_cortical-inner.png' % demoHash
-  figPaths[5] = '../static/generated/%s/Image_2_subcortical.png' % demoHash
+  srcFld = '../static/example'
+
+  figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
+  figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
+  figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
+  figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
+  figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
+  figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
 
 
   figDescs = [x.split('/')[-1][:-4] for x in figPaths]
   figDescsShort = [x[:17] for x in figDescs]
-  zipLocation = '../static/generated/%s/figures.zip' % demoHash
+  zipLocation = '%s/figures.zip' % srcFld
 
   return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
