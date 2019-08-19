@@ -8,6 +8,6 @@ test_on_prod:
 	# then restart gunicorn server
 	sudo systemctl restart gunicorn
 
-	# optional?
-	sudo systemctl enable gunicorn
+	# see error log
+	journalctl -u gunicorn
 	
