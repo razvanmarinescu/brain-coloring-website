@@ -54,7 +54,7 @@ def allowed_file(filename):
 
 
 def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                            BACKGROUND_COLOR, CONFIG_FILE):
+                            BACKGROUND_COLOR, CONFIG_FILE, LOG_FILE):
 
   #OUTPUT_FOLDER = '../static/generated/%s' % hash
   OUTPUT_FOLDER = 'generated/%s' % hash
@@ -74,7 +74,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
 
     cmd = 'docker run -it --mount src=%s,target=%s,type=bind' \
-          ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
+          ' %s /bin/bash -c \'%s\' > %s ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD, LOG_FILE)
     print(cmd)
     os.system(cmd)
 
@@ -186,13 +186,14 @@ def generated():
       print('fullFilePath', fullFilePath)
       os.system('mkdir -p %s' % EXP_DIR)
       file.save(fullFilePath)
+      LOG_FILE = '%s/log-blender.txt' % EXP_DIR
 
       partialFilePath = 'generated/%s/%s' % (hash, filename)
 
       for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
         CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
         processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                              BACKGROUND_COLOR, CONFIG_FILE)
+                              BACKGROUND_COLOR, CONFIG_FILE, LOG_FILE)
 
       zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
       os.system(zipCmd)
