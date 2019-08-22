@@ -63,6 +63,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
                             BACKGROUND_COLOR)
 
 
+
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
 
