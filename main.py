@@ -30,6 +30,8 @@ RESOLUTION = config.RESOLUTION
 BACKGROUND_COLOR = config.BACKGROUND_COLOR
 
 
+DOCKER=True
+
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
   text = "ATLAS='%s'" % ATLAS + '\n\n'
   text += "INPUT_FILE='%s'" % INPUT_FILE + '\n\n'
@@ -54,7 +56,8 @@ def allowed_file(filename):
 def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR, CONFIG_FILE):
 
-  OUTPUT_FOLDER = '../generated/%s' % hash
+  #OUTPUT_FOLDER = '../static/generated/%s' % hash
+  OUTPUT_FOLDER = 'generated/%s' % hash
 
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR)
@@ -63,7 +66,21 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
 
-  cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+
+  if DOCKER:
+    HOST_DIR = '%s/static/generated/' % REPO_DIR
+    DOCKER_DIR = '/home/brain-coloring/generated/'
+    IMG_NAME = 'mrazvan22/brain-coloring:dev'
+    INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+
+    cmd = 'sudo docker run -it --mount src=%s,target=%s,type=bind' \
+          ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
+    print(cmd)
+    os.system(cmd)
+    
+  else:
+    cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+
   print(cmd)
   os.system('pwd')
   os.system(cmd)
@@ -170,15 +187,17 @@ def generated():
       os.system('mkdir -p %s' % EXP_DIR)
       file.save(fullFilePath)
 
+      partialFilePath = 'generated/%s/%s' % (hash, filename)
+
       for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
         CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
-        processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+        processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                               BACKGROUND_COLOR, CONFIG_FILE)
 
-      zipCmd = 'cd generated/%s; zip -r figures.zip *.png' % hash
+      zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
       os.system(zipCmd)
 
-      OUTPUT_FOLDER = 'generated/%s' % (hash)
+      #OUTPUT_FOLDER = 'generated/%s' % (hash)
 
       # figPaths = [0, 0, 0]
       # figPaths[0] = os.path.join('../static/generated', '%s/cortical-back_0.png')
