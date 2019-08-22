@@ -73,11 +73,11 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     IMG_NAME = 'mrazvan22/brain-coloring:dev'
     INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
 
-    cmd = 'sudo docker run -it --mount src=%s,target=%s,type=bind' \
+    cmd = 'docker run -it --mount src=%s,target=%s,type=bind' \
           ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
     print(cmd)
     os.system(cmd)
-    
+
   else:
     cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
 
