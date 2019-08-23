@@ -50,6 +50,9 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#how">How it works</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#run">Run</a>
           </li>
           <li class="nav-item">
@@ -60,6 +63,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#about">About</a>
           </li>
         </ul>
       </div>
@@ -72,20 +78,41 @@
       <div class="mx-auto text-center">
         <h1 class="mx-auto my-0">BrainPainter</h1>
         <h2 class="text-white-50 mx-auto mt-2 mb-5">A free software for visualisation of brain structures, biomarkers and associated pathological processes.</h2>
-        <a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a>
+        <a href="#how" class="btn btn-primary js-scroll-trigger">How it works</a>
+<!--         <br><br><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a>-->
       </div>
     </div>
   </header>
 
 
-  <script src="static/jscolor.js"></script>
 
-  <!-- Customise Section -->
-  <section id="run">
+
+  <!-- How it works Section -->
+  <section id="how">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
           <br><br>
+          <h2 class="text-black mb-4 text-center">How BrainPainter works</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
+        </div>
+      </div>
+
+
+    <br><br><img src="static/diagram_front_page.png"  style="width:100%" align="middle">
+
+    <br><br><center><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a></center><br><br>
+
+    </div>
+  </section>
+
+  <script src="static/jscolor.js"></script>
+
+  <!-- Customise Section -->
+  <section id="run" class="projects-section bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
           <h2 class="text-black mb-4 text-center">Run BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -153,7 +180,7 @@
 
       <p>If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
 
-    Upload input data file (.csv) according to these templates:
+    Upload input data file (.csv) according to these templates (max 20 different rows):
       <ul>
         <li><a href="static/DK_template.csv"> Desikan-Killiany template</a>:</li>
         <li><a href="static/Destrieux_template.csv"> Destrieux template</a>:</li>
@@ -161,17 +188,17 @@
       </ul>
 
     <input type=file name=file>
-    <input type=submit value="Generate">
+    <input type=submit value="Generate" >
   </form>
-      <br>Processing usually takes around 15 seconds for each brain (set of 3 images with different viewpoints).
-
+        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation.
+        Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>.
     </div>
   </section>
 
 
 
   <!-- Gallery Section -->
-  <section id="gallery" class="projects-section bg-light text-center">
+  <section id="gallery">
     <div class="container">
       <div class="row">
 <!--        <a href="{{ url_for('.index', _anchor='gallery') }}">Anchor</a>-->
@@ -247,7 +274,7 @@
 
 
         <br><div class="container" align="left">
-              <a href="{{zipLocation }}" target="blank"><button class='btn btn-default'>Download!</button></a>
+              <a href="{{zipLocation }}" target="blank"><button class="btn btn-primary js-scroll-trigger">Download!</button></a>
          </div>
 
       {% if galleryDisabled != 'disabled' %}
@@ -273,7 +300,7 @@
 
     @article{marinescu2019brain,
       title={BrainPainter: A software for the visualisation of brain structures, biomarkers and associated pathological processes},
-      author={Marinescu, Razvan and Alexander, Daniel and Golland, Polina},
+      author={Marinescu, Razvan and Eshaghi, Arman and Alexander, Daniel and Golland, Polina},
       journal={arXiv preprint arXiv:1905.08627},
       year={2019}
     }
@@ -286,11 +313,10 @@
   </section>
 
   <!-- Example Uses Section -->
-  <section id="examples" class="text-center">
+  <section id="examples"  class="projects-section bg-light text-center">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
-          <br><br>
           <h2 class="text-black mb-4">Example uses of BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -314,7 +340,7 @@
 
 
   <!-- Advanced use Section -->
-  <section id="advanced" class="projects-section bg-light">
+  <section id="advanced">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
@@ -338,6 +364,7 @@
 
     </p>
 
+    <br><br>
 
 
     </div>
@@ -345,7 +372,26 @@
 
 
 
+ <!-- Advanced use Section -->
+  <section id="about" class="projects-section bg-light ">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4 text-center">About BrainPainter</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
+        </div>
+      </div>
 
+    <p>BrainPainter is a free and open source software published under the CC-BY-SA software license. Our paper, which can be found here <a href="https://arxiv.org/abs/1905.08627">here</a>, was accepted for an oral presentation at the MICCAI 2019 <a href="http://crystal.uta.edu/~mbia/">MBIA workshop</a> in Shenzhen, China.</p>
+
+    <p>Funding for BrainPainter was provided by the NIH grants NIBIB NAC P41EB015902 and NINDS R01NS086905, as well as the EPSRC Centre For Doctoral Training in Medical Imaging with grant EP/L016478/1. We are also particularly grateful to Anderson Winkler for creating the <a href="https://brainder.org/research/brain-for-blender/">3D brain models</a> for all three atlases, which are used by the software. </p>
+
+    <br><br>
+
+
+    </div>
+  </section>
 
 <!--  &lt;!&ndash; Signup Section &ndash;&gt;-->
 <!--  <section id="signup" class="signup-section">-->

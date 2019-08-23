@@ -102,10 +102,10 @@
 
 .masthead h1 {
   font-family: 'Varela Round';
-  font-size: 2.5rem;
-  line-height: 2.5rem;
+  font-size: 3.5rem;
+  line-height: 3.5rem;
   letter-spacing: 0.8rem;
-  background: -webkit-linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+  background: -webkit-linear-gradient(rgba(255, 65, 0, 1), rgba(255, 65, 0, 0));
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
 
@@ -153,20 +153,20 @@
 }
 
 .btn-primary {
-  background-color: #64a19d;
+  background-color: #ad2c00;
 }
 
 .btn-primary:hover {
-  background-color: #4f837f;
+  background-color: #8f2400;
 }
 
 .btn-primary:focus {
-  background-color: #4f837f;
+  background-color: #8f2400;
   color: black;
 }
 
 .btn-primary:active {
-  background-color: #467370 !important;
+  background-color: #8f2400 !important;
 }
 
 .about-section {
