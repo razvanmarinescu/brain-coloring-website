@@ -32,6 +32,10 @@ BACKGROUND_COLOR = config.BACKGROUND_COLOR
 
 DOCKER=True
 
+import socket
+if socket.gethostname() == 'sesame':
+  DOCKER=False
+
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
   text = "ATLAS='%s'" % ATLAS + '\n\n'
   text += "INPUT_FILE='%s'" % INPUT_FILE + '\n\n'
