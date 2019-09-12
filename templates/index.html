@@ -62,7 +62,7 @@
             <a class="nav-link js-scroll-trigger" href="#examples">Example Uses</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use</a>
+            <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use & Videos</a>
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#about">About</a>
@@ -190,8 +190,10 @@
     <input type=file name=file>
     <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >
   </form>
-        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation.
-        Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>.
+        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation. (Progress bar will be implemented soon)
+        <br><br>
+
+        Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>. Please email me (razvan at csail.mit.edu) if you encounter any errors.
     </div>
   </section>
 
@@ -373,6 +375,14 @@ Cortical - outer   | Cortical - inner   |  Subcortical
           </li>
 
         </ul>
+
+      <h2 class="text-black mb-4 text-center">Videos</h2>
+
+      For generating videos showing e.g. progression of pathology, you need to generate many images (25/sec), where each image is a new row in the input .csv spreadsheet. For example, to generate a 4-second video, you need 100 rows. The numbers you fill in need to change smoothly. After generating the images, you can find programs online/linux commandsto merge the frames into an animated gif.
+
+      <br><br>
+
+      Finally, please send images in batches of max. 20, as this will otherwise congest our server and the program will also time out. For generating many images (>100), consider running the software on your local machine from the docker container.
 
 
     </p>
