@@ -2,7 +2,10 @@
 
 ![Front page](static/frontPage.png)
 
-For any issues, please email me: razvan (at) csail-mit-edu (replace dash with dot).
+For any issues, please email me: razvan (at) csail-mit-edu (replace dash with dot). The website template is open-source 
+and adapted from the grayscale template: https://startbootstrap.com/themes/grayscale/. It is published under the free, MIT license. 
+
+
 
 ## Installation
 
