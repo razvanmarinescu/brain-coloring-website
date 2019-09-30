@@ -49,6 +49,8 @@ def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, C
   text += "cortAreasIndexMapDestrieux = %s" % str(config.cortAreasIndexMapDestrieux) + '\n\n'
   text += "cortAreasIndexMapTourville = %s" % str(config.cortAreasIndexMapTourville) + '\n\n'
   text += "subcortAreasIndexMap = %s" % str(config.subcortAreasIndexMap) + '\n\n'
+  text += "requestFromWebsite = True" + '\n\n'
+
 
   return text
 
