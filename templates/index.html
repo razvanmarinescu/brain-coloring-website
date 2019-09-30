@@ -40,6 +40,10 @@
 
 <body id="page-top">
 
+
+
+
+
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
@@ -179,6 +183,7 @@
     </div>
 
       <p>If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
+  <a name="error"></a>
 
     Upload input data file (.csv) according to these templates (max 20 different rows):
       <ul>
@@ -187,9 +192,29 @@
         <li><a href="static/Tourville_template.csv"> Tourville template</a>:</li>
       </ul>
 
+
+
     <input type=file name=file>
     <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >
   </form>
+
+  {% with messages = get_flashed_messages() %}
+     {% if messages %}
+        <br><h1><font color="red">Errors:</font></h1>
+        <ul>
+           {% for message in messages %}
+            <font color="red">{{ message }}</font> <br><br>
+           {% endfor %}
+        </ul>
+     {% endif %}
+  {% endwith %}
+
+  {% if result %}
+      {% for line in result %}
+        {{ line }}
+      {% endfor %}
+  {% endif %}
+
         <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation. (Progress bar will be implemented soon)
         <br><br>
 
@@ -313,6 +338,11 @@
 
     </div>
   </section>
+
+
+
+
+
 
   <!-- Example Uses Section -->
   <section id="examples"  class="projects-section bg-light text-center">
@@ -597,6 +627,12 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
         <script> window.location.hash="gallery"; </script>
       {% endif %}
 
+      {% with messages = get_flashed_messages() %}
+         {% if messages %}
+           <script> window.location.hash="error"; </script>
+         {% endif %}
+      {% endwith %}
+
     <script>// For todays date;
 Date.prototype.today = function () {
     return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
@@ -609,7 +645,18 @@ Date.prototype.timeNow = function () {
 
 <!--<script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.1/dist/showdown.min.js"></script>-->
 
-
+<script>
+function check_progress(task_id, progress_bar) {
+    function worker() {
+        $.get('progress/' + task_id, function(data) {
+            if (progress < 100) {
+                progress_bar.set_progress(progress)
+                setTimeout(worker, 1000)
+            }
+        })
+    }
+}
+</script>
 
 </body>
 

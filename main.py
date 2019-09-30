@@ -6,6 +6,15 @@ import glob
 # from flaskext.markdown import Markdown
 from flask_misaka import Misaka
 import numpy as np
+import pandas as pd
+import subprocess
+import time
+import threading
+
+from jinja2 import Environment
+from jinja2.loaders import FileSystemLoader
+
+from brainPainterRepo import fileFormatChecker
 
 UPLOAD_FOLDER = '/research/brain-coloring-website/uploads'
 REPO_DIR = os.getcwd()
@@ -35,6 +44,9 @@ DOCKER=True
 import socket
 if socket.gethostname() == 'sesame':
   DOCKER=False
+
+procDetails = {}
+
 
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
   text = "ATLAS='%s'" % ATLAS + '\n\n'
@@ -68,10 +80,44 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR)
 
-
-
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
+
+
+  # check input file for errors
+  matDf = pd.read_csv(fullFilePath)
+
+  global procDetails
+  procDetails[hash] = {}
+  procDetails[hash]['nrRowsDf'] = matDf.shape[0]
+
+  if ATLAS == 'DK':
+    cortAreasIndexMap = config.cortAreasIndexMapDK
+    subcortAreasIndexMap = config.subcortAreasIndexMap
+  elif ATLAS == 'Destrieux':
+    cortAreasIndexMap = config.cortAreasIndexMapDestrieux
+    subcortAreasIndexMap = config.subcortAreasIndexMap
+  elif ATLAS == 'Tourville':
+    cortAreasIndexMap = config.cortAreasIndexMapTourville
+    subcortAreasIndexMap = config.subcortAreasIndexMap
+    ATLAS = 'DKT'  # actually 3D models are labelled as DKT
+  elif ATLAS == 'Custom':
+    cortAreasIndexMap = config.cortAreasIndexMapCustom
+    subcortAreasIndexMap = config.subcortAreasIndexMapCustom
+  else:
+    raise ValueError('ATLAS has to be either \'DK\', \'Destrieux\', \'Tourville\' or \'Custom\' ')
+
+  cortRegionsThatShouldBeInTemplate = list(cortAreasIndexMap.values())
+  subcortRegionsThatShouldBeInTemplate = list(subcortAreasIndexMap.values())
+  regionsThatShouldBeInTemplate = cortRegionsThatShouldBeInTemplate + subcortRegionsThatShouldBeInTemplate
+
+  errorMsg = fileFormatChecker.checkInputDf(matDf, regionsThatShouldBeInTemplate, getErrorAsStr = True)
+
+  if errorMsg != '':
+    # flash(errorMsg)
+    return errorMsg
+
+
 
 
   if DOCKER:
@@ -94,8 +140,26 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
 
 
-  return 'File uploaded successfully'
+  return ''
 
+
+def renderDefTemplate():
+  figPaths = [0, 0, 0, 0, 0, 0]
+  srcFld = '../static/example'
+
+  figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
+  figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
+  figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
+  figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
+  figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
+  figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
+
+
+  figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+  figDescsShort = [x[:17] for x in figDescs]
+  zipLocation = '%s/figures.zip' % srcFld
+
+  return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
 
 
@@ -114,32 +178,34 @@ def index():
       return redirect(request.url)
     if file and allowed_file(file.filename):
       import random
-      hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
-      filename = hash + '_' + secure_filename(file.filename)
+      # hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
+      # filename = hash + '_' + secure_filename(file.filename)
 
-      fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+      # fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
       # file.save(fullFilePath)
       # processFile(hash, fullFilePath)
 
   # form = ReusableForm()
 
-  figPaths = [0, 0, 0, 0, 0, 0]
-  srcFld = '../static/example'
+  return renderDefTemplate()
 
-  figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
-  figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
-  figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
-  figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
-  figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
-  figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
-
-
-  figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-  figDescsShort = [x[:17] for x in figDescs]
-  zipLocation = '%s/figures.zip' % srcFld
-
-  return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
+  # figPaths = [0, 0, 0, 0, 0, 0]
+  # srcFld = '../static/example'
+  #
+  # figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
+  # figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
+  # figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
+  # figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
+  # figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
+  # figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
+  #
+  #
+  # figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+  # figDescsShort = [x[:17] for x in figDescs]
+  # zipLocation = '%s/figures.zip' % srcFld
+  #
+  # return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
 
 
@@ -188,6 +254,7 @@ def generated():
       print('lalalalaaa 2')
 
 
+
       EXP_DIR = '%s/static/generated/%s' % (REPO_DIR, hash)
       fullFilePath = os.path.join(EXP_DIR, filename)
       print('fullFilePath', fullFilePath)
@@ -196,11 +263,23 @@ def generated():
       LOG_FILE = '%s/log-blender.txt' % EXP_DIR
 
       partialFilePath = 'generated/%s/%s' % (hash, filename)
+      errorMsgs = []
 
       for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
         CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
-        processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
-                              BACKGROUND_COLOR, CONFIG_FILE, LOG_FILE)
+        errorMsgs += [processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
+                              BACKGROUND_COLOR, CONFIG_FILE, LOG_FILE)]
+
+      print('errorMsgs', errorMsgs)
+      errorMsgsUnq = np.unique([e for e in errorMsgs if e != ''])
+
+      for e in errorMsgsUnq:
+        for subErs in e.split('\n\n'):
+          #flash(e.replace('\n\n', '<br/>'))
+          flash(subErs)
+
+      # if len(errorMsgsUnq) > 0:
+      #   return renderDefTemplate()
 
       zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
       os.system(zipCmd)
@@ -224,9 +303,53 @@ def generated():
       # asda
       zipLocation = os.path.join('../static/generated/%s' % hash, 'figures.zip')
 
+
+      if True:
+
+        def inner():
+          proc = subprocess.Popen(
+            ['dmesg'],  # call something with a lot of output so we can see it
+            shell=True,
+            stdout=subprocess.PIPE,
+            universal_newlines=True
+          )
+
+          for line in iter(proc.stdout.readline, ''):
+            time.sleep(1)  # Don't need this just shows the text streaming
+            yield line.rstrip() + '<br/>\n'
+
+        def stream_template(template_name, **context):
+          app.update_template_context(context)
+          t = app.jinja_env.get_template(template_name)
+          rv = t.stream(context)
+          rv.enable_buffering(5)
+          return rv
+
+        env = Environment(loader=FileSystemLoader('templates'))
+
+        tmpl = env.get_template('indexSimple.html')
+        print(tmpl)
+        return Response(tmpl.generate(result=inner(), figPaths=figPaths, figDescs=figDescs,
+                                      galleryDisabled='', zipLocation=zipLocation, figDescsShort=figDescsShort))
+
+        # return Response(inner(), mimetype='text/html')
+
+      if len(errorMsgsUnq) > 0:
+        return renderDefTemplate()
+
       return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
   return render_template('index.html')
+
+@app.route('/progress/<str:hash>')
+def progress(hash):
+    EXP_DIR = '../../static/generated/%s' % hash
+    nrImagesSoFar = glob.glob('%s/*.png' % EXP_DIR)
+
+    nrRowsDf = procDetails[hash]['nrRowsDf']
+    progress = float(nrImagesSoFar) / (nrRowsDf * 3)
+
+    return str(progress)
 
 def parseCommaSepStr(strCol, convFunc=float):
   if strCol != '':
