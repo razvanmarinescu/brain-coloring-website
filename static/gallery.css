@@ -54,6 +54,19 @@ body {
   margin-right: auto;
 }
 
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  background-color: #FFFFFF;
+  opacity:0.0; // I ADDED THIS LINE
+}
+
+
 /* The Close Button */
 .close {
   color: white;
@@ -106,7 +119,7 @@ body {
 /* On hover, add a black background color with a little bit see-through */
 .prev:hover,
 .next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 1);
 }
 
 /* Number text (1/3 etc) */
@@ -130,7 +143,7 @@ img {
 }
 
 .demo {
-  opacity: 0.6;
+  opacity: 1;
   margin-bottom: 0px;
 }
 

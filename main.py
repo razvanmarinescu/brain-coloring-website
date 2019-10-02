@@ -10,6 +10,8 @@ import pandas as pd
 import subprocess
 import time
 import threading
+import json
+# from flask import jsonify
 
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
@@ -41,11 +43,13 @@ BACKGROUND_COLOR = config.BACKGROUND_COLOR
 
 DOCKER=True
 
-import socket
-if socket.gethostname() == 'sesame':
-  DOCKER=False
+# import socket
+# if socket.gethostname() == 'sesame':
+#   DOCKER=False
 
 procDetails = {}
+procDetails['testHash']= {}
+procDetails['testHash']['nrRowsDf'] = 1
 
 
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
@@ -123,27 +127,37 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   if DOCKER:
     HOST_DIR = '%s/static/generated/' % REPO_DIR
     DOCKER_DIR = '/home/brain-coloring/generated/'
-    IMG_NAME = 'mrazvan22/brain-coloring:dev'
+    IMG_NAME = 'mrazvan22/brain-coloring'
     INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
 
     cmd = 'docker run  --mount src=%s,target=%s,type=bind' \
           ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
+
     print(cmd)
-    os.system(cmd)
+    # os.system(cmd)
+
+    os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
+    proc = subprocess.Popen(
+      cmd,  # call something with a lot of output so we can see it
+      shell=True,
+      stdout=subprocess.PIPE,
+      universal_newlines=True
+    )
+
 
   else:
     cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
 
-  print(cmd)
-  os.system('pwd')
-  os.system(cmd)
+    print(cmd)
+    os.system('pwd')
+    os.system(cmd)
 
 
 
   return ''
 
 
-def renderDefTemplate():
+def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
   figPaths = [0, 0, 0, 0, 0, 0]
   srcFld = '../static/example'
 
@@ -159,7 +173,8 @@ def renderDefTemplate():
   figDescsShort = [x[:17] for x in figDescs]
   zipLocation = '%s/figures.zip' % srcFld
 
-  return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
+  return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled=galleryDisabled,
+                         zipLocation=zipLocation, figDescsShort=figDescsShort, hash=hash)
 
 
 
@@ -278,78 +293,64 @@ def generated():
           #flash(e.replace('\n\n', '<br/>'))
           flash(subErs)
 
-      # if len(errorMsgsUnq) > 0:
-      #   return renderDefTemplate()
-
-      zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
-      os.system(zipCmd)
-
-      #OUTPUT_FOLDER = 'generated/%s' % (hash)
-
-      # figPaths = [0, 0, 0]
-      # figPaths[0] = os.path.join('../static/generated', '%s/cortical-back_0.png')
-      # figPaths[1] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
-      # figPaths[2] = os.path.join('../static/generated', '39F1DD8350DAE7FB/cortical-back_1.png')
-
-      figPaths = glob.glob("%s/*.png" % EXP_DIR)
-      figPaths = list(np.sort(figPaths))
-
-      figPaths = ['../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
-
-      figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-      figDescsShort = [x[:17] for x in figDescs]
-      print('figPaths', figPaths)
-      print('figDescs', figDescs)
-      # asda
-      zipLocation = os.path.join('../static/generated/%s' % hash, 'figures.zip')
-
-
-      if True:
-
-        def inner():
-          proc = subprocess.Popen(
-            ['dmesg'],  # call something with a lot of output so we can see it
-            shell=True,
-            stdout=subprocess.PIPE,
-            universal_newlines=True
-          )
-
-          for line in iter(proc.stdout.readline, ''):
-            time.sleep(1)  # Don't need this just shows the text streaming
-            yield line.rstrip() + '<br/>\n'
-
-        def stream_template(template_name, **context):
-          app.update_template_context(context)
-          t = app.jinja_env.get_template(template_name)
-          rv = t.stream(context)
-          rv.enable_buffering(5)
-          return rv
-
-        env = Environment(loader=FileSystemLoader('templates'))
-
-        tmpl = env.get_template('indexSimple.html')
-        print(tmpl)
-        return Response(tmpl.generate(result=inner(), figPaths=figPaths, figDescs=figDescs,
-                                      galleryDisabled='', zipLocation=zipLocation, figDescsShort=figDescsShort))
-
-        # return Response(inner(), mimetype='text/html')
-
       if len(errorMsgsUnq) > 0:
         return renderDefTemplate()
 
-      return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
-  return render_template('index.html')
+      return render_template('processing.html',hash=json.dumps(hash))
 
-@app.route('/progress/<str:hash>')
+
+
+  # return render_template('processing.html', hash=json.dumps('testHash'))
+  return renderDefTemplate()
+
+
+
+
+@app.route('/generated/<hash>')
+def generateForHash(hash):
+    EXP_DIR = 'static/generated/%s' % hash
+
+    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
+    os.system(zipCmd)
+
+
+    figPaths = glob.glob("%s/*.png" % EXP_DIR)
+    figPaths = list(np.sort(figPaths))
+
+    figPaths = ['../../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
+
+    figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+    figDescsShort = [x[:17] for x in figDescs]
+    print('figPaths', figPaths)
+    print('figDescs', figDescs)
+    # asda
+    zipLocation = os.path.join('../../static/generated/%s' % hash, 'figures.zip')
+
+
+    # return render_template('processing.html', hash=json.dumps(hash))
+
+    return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='',
+                           zipLocation=zipLocation, figDescsShort=figDescsShort, hash=json.dumps(hash))
+
+
+@app.route('/progress/<hash>')
 def progress(hash):
-    EXP_DIR = '../../static/generated/%s' % hash
-    nrImagesSoFar = glob.glob('%s/*.png' % EXP_DIR)
+    EXP_DIR = 'static/generated/%s' % hash
+    imagesSoFar = glob.glob('%s/*.png' % EXP_DIR)
+    nrImagesSoFar = len(imagesSoFar)
 
+    print('pwd')
+    os.system('pwd')
+    global procDetails
+    print('imagesSoFar', imagesSoFar)
+    print(procDetails)
     nrRowsDf = procDetails[hash]['nrRowsDf']
-    progress = float(nrImagesSoFar) / (nrRowsDf * 3)
+    progress = int(100 * float(nrImagesSoFar) / (nrRowsDf * 3))
 
-    return str(progress)
+    print(str(progress))
+
+    return jsonify(newProgress=progress)
 
 def parseCommaSepStr(strCol, convFunc=float):
   if strCol != '':
@@ -363,276 +364,6 @@ def parseCol(strCol):
   rgbCol = (float(rgbCol[0])/255, float(rgbCol[1])/255, float(rgbCol[2])/255)
   print(rgbCol)
   return [rgbCol]
-
-
-def createGalleryHtml(zipLocation):
-
-  return '''
-
-<!doctype html>
-<title>Gallery</title>
-<head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-</head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  font-family: Verdana, sans-serif;
-  margin: 0;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-.row > .column {
-  padding: 0 8px;
-}
-
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-.rowModal {
-  padding: 0 0px;
-  margin-bottom: 0px;
-}
-
-.column {
-  float: left;
-  width: 15%;
-}
-
-/* The Modal (background) */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: black;
-}
-
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: white;
-  margin: auto;
-  padding: 0;
-  width: 90%;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* The Close Button */
-.close {
-  color: white;
-  position: absolute;
-  top: 10px;
-  right: 25px;
-  font-size: 35px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #999;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.mySlides {
-  display: none;
-}
-
-.cursor {
-  cursor: pointer;
-}
-
-/* Next & previous buttons */
-.prev,
-.next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -50px;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-/* On hover, add a black background color with a little bit see-through */
-.prev:hover,
-.next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Number text (1/3 etc) */
-.numbertext {
-  color: #f2f2f2;
-  font-size: 12px;
-  padding: 8px 12px;
-  position: absolute;
-  top: 0;
-}
-
-img {
-  margin-bottom: -4px;
-}
-
-.caption-container {
-  text-align: center;
-  background-color: black;
-  padding: 2px 16px;
-  color: white;
-}
-
-.demo {
-  opacity: 0.6;
-  margin-bottom: 0px;
-}
-
-.active,
-.demo:hover {
-  opacity: 1;
-  margin-bottom: 0px;
-}
-
-img.hover-shadow {
-  transition: 0.3s;
-}
-
-.hover-shadow:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-</style>
-
-
-<body class="body">
-
-
-<!-- Images used to open the lightbox -->
-<div class="row">
-  <div class="column">
-    <img src="''' + figPaths + '''"  style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow">
-  </div>
-  <div class="column">
-    <img src="''' + figPaths + '''"  style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow">
-  </div>
-</div>
-
-<!-- The Modal/Lightbox -->
-<div id="myModal" class="modal">
-  <span class="close cursor" onclick="closeModal()">&times;</span>
-  <div class="modal-content">
-
-    <div class="mySlides">
-      <div class="numbertext">1 / 2</div>
-      <img src="''' + figPaths + '''" style="width:100%">
-    </div>
-
-    <div class="mySlides">
-      <div class="numbertext">2 / 2</div>
-      <img src="''' + figPaths + '''" style="width:100%">
-    </div>
-
-    <!-- Next/previous controls -->
-    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-    <a class="next" onclick="plusSlides(1)">&#10095;</a>
-
-    <!-- Caption text -->
-    <div class="caption-container">
-      <p id="caption"></p>
-    </div>
-
-    <!-- Thumbnail image controls -->
-    <div class="rowModal">
-      <div class="column">
-        <img class="demo" src="''' + figPaths + '''" style="width:100%" onclick="currentSlide(1)" alt="Nature">
-      </div><div class="column">
-        <img class="demo" src="''' + figPaths + '''" style="width:100%" onclick="currentSlide(2)" alt="Snow">
-      </div>
-    </div>
-  </div>
-</div>
-
-
-   <div class="container" align="left">
-		<a href="''' + zipLocation + '''" target="blank"><button class='btn btn-default'>Download!</button></a>
-   </div>
-   
-   
-<script>
-function openModal() {
-  document.getElementById("myModal").style.display = "block";
-}
-
-function closeModal() {
-  document.getElementById("myModal").style.display = "none";
-}
-
-var slideIndex = 1;
-showSlides(slideIndex);
-
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
-
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("demo");
-  var captionText = document.getElementById("caption");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
-  }
-  for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";
-  dots[slideIndex-1].className += " active";
-  captionText.innerHTML = dots[slideIndex-1].alt;
-}
-</script>
-
-
-   
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-
-
-
-</body>
-
-'''
-
 
 
 

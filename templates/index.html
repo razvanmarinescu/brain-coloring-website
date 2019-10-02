@@ -103,14 +103,14 @@
       </div>
 
 
-    <br><br><img src="static/diagram_front_page.png"  style="width:100%" align="middle">
+    <br><br><img src="/static/diagram_front_page.png"  style="width:100%" align="middle">
 
     <br><br><center><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a></center><br><br>
 
     </div>
   </section>
 
-  <script src="static/jscolor.js"></script>
+  <script src="/static/jscolor.js"></script>
 
   <!-- Customise Section -->
   <section id="run" class="projects-section bg-light">
@@ -125,7 +125,7 @@
 
 
 
-    <form method=post enctype=multipart/form-data action=generated>
+    <form method=post enctype=multipart/form-data action="/generated">
      <div class="form-group row">
       <div class="col-3">
         <label for="exampleFormControlSelect1">Atlas</label>
@@ -187,15 +187,16 @@
 
     Upload input data file (.csv) according to these templates (max 20 different rows):
       <ul>
-        <li><a href="static/DK_template.csv"> Desikan-Killiany template</a>:</li>
-        <li><a href="static/Destrieux_template.csv"> Destrieux template</a>:</li>
-        <li><a href="static/Tourville_template.csv"> Tourville template</a>:</li>
+        <li><a href="/static/DK_template.csv"> Desikan-Killiany template</a>:</li>
+        <li><a href="/static/Destrieux_template.csv"> Destrieux template</a>:</li>
+        <li><a href="/static/Tourville_template.csv"> Tourville template</a>:</li>
       </ul>
 
 
 
     <input type=file name=file>
     <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >
+<!--    <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >-->
   </form>
 
   {% with messages = get_flashed_messages() %}
@@ -215,12 +216,15 @@
       {% endfor %}
   {% endif %}
 
+
         <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation. (Progress bar will be implemented soon)
         <br><br>
 
         Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>. Please email me (razvan at csail.mit.edu) if you encounter any errors.
+        <a name="gallery"></a>
     </div>
   </section>
+
 
 
 
@@ -229,7 +233,7 @@
     <div class="container">
       <div class="row">
 <!--        <a href="{{ url_for('.index', _anchor='gallery') }}">Anchor</a>-->
-        <a name="gallery"></a>
+
         <div class="col-lg-8 mx-auto">
           <br><br>
           {% if galleryDisabled == 'disabled' %}
@@ -309,15 +313,10 @@
   <!-- End of Gallery code-->
       {% endif %}
 
-<!--   <script>-->
-<!--   var converter = new showdown.Converter(),-->
-<!--    text      = '# hello, markdown!',-->
-<!--    html      = converter.makeHtml(text);-->
-<!--    document.write(html)-->
-<!--   </script>-->
 
 
-            <br><br><div align="left">
+
+        <br><br><div align="left">
        <p  align="left">
 
   {% filter markdown %}
@@ -361,7 +360,7 @@
 
 Cortical - outer   | Cortical - inner   |  Subcortical
 :-------------------------:|:------------------:|:-----------------:
-![Cortical surface](static/outer_small.gif) | ![Cortical surface back](static/inner_small.gif)   |  ![Subcortical structures](static/subcortical_small.gif)
+![Cortical surface](/static/outer_small.gif) | ![Cortical surface back](/static/inner_small.gif)   |  ![Subcortical structures](/static/subcortical_small.gif)
 &nbsp;
 
 Animation created using BrainPainter, showing progression of amyloid deposition in Alzheimer's. By [Garbarino and Lorenzi, IPMI, 2019](https://arxiv.org/pdf/1901.10545.pdf)
@@ -369,10 +368,10 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
 {% endfilter %}<br><br><br>
          </center>
 
-        <img src="static/young_sustain.png"  style="width:60%" align="middle"><br><br>
+        <img src="/static/young_sustain.png"  style="width:60%" align="middle"><br><br>
        Brain images generated using BrainPainter, showing atrophy progression in Alzheimer's subtypes. By <a href="https://www.nature.com/articles/s41467-018-05892-0">Young et al., Nature Comms., 2018<a/><br><br><br>
 
-        <img src="static/peter_subcortical.jpg"  style="width:60%"><br><br>
+        <img src="/static/peter_subcortical.jpg"  style="width:60%"><br><br>
        Atrophy progression for subcortical regions in Huntington's disease. By <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/acn3.558">Wijeratne et al, Ann. Clin. Neurol., 2018</a>.<br><br><br>
 
 
@@ -624,7 +623,10 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
       {% if galleryDisabled != 'disabled' %}
-        <script> window.location.hash="gallery"; </script>
+        <script>
+        window.location.hash="gallery";
+        window.scrollTo(window.scrollX, window.scrollY - 100);
+        </script>
       {% endif %}
 
       {% with messages = get_flashed_messages() %}
@@ -645,18 +647,8 @@ Date.prototype.timeNow = function () {
 
 <!--<script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.1/dist/showdown.min.js"></script>-->
 
-<script>
-function check_progress(task_id, progress_bar) {
-    function worker() {
-        $.get('progress/' + task_id, function(data) {
-            if (progress < 100) {
-                progress_bar.set_progress(progress)
-                setTimeout(worker, 1000)
-            }
-        })
-    }
-}
-</script>
+
+
 
 </body>
 
