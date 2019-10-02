@@ -13,6 +13,8 @@ import threading
 import json
 # from flask import jsonify
 
+import docker
+
 from jinja2 import Environment
 from jinja2.loaders import FileSystemLoader
 
@@ -136,7 +138,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     print(cmd)
     # os.system(cmd)
 
-    os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
+    # os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
     proc = subprocess.Popen(
       cmd,  # call something with a lot of output so we can see it
       shell=True,
@@ -144,8 +146,15 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
       universal_newlines=True
     )
 
-    procDetails[hash]['procList'] += [proc]
 
+    #TODO
+    # client = docker.from_env()
+    # container = client.containers.run(IMG_NAME, command=INNER_CMD, working_dir
+    #                                   volumes={HOST_DIR: {'bind': DOCKER_DIR, 'mode': 'rw'}}, detach=True)
+
+
+    procDetails[hash]['procList'] += [proc]
+    # procDetails[hash]['procList'] += [container]
 
   else:
     cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
