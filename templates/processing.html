@@ -210,6 +210,9 @@ function loop() {
         if (data.newProgress == 100){
             window.location = '/generated/' + hash;
         }
+        if (data.error == 1){
+            window.location = '/generated/' + hash + '?error=' + data.error;
+        }
 
     })
 

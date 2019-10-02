@@ -52,6 +52,7 @@ procDetails['testHash']= {}
 procDetails['testHash']['nrRowsDf'] = 1
 
 
+
 def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION, BACKGROUND_COLOR):
   text = "ATLAS='%s'" % ATLAS + '\n\n'
   text += "INPUT_FILE='%s'" % INPUT_FILE + '\n\n'
@@ -92,7 +93,6 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   matDf = pd.read_csv(fullFilePath)
 
   global procDetails
-  procDetails[hash] = {}
   procDetails[hash]['nrRowsDf'] = matDf.shape[0]
 
   if ATLAS == 'DK':
@@ -144,6 +144,8 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
       universal_newlines=True
     )
 
+    procDetails[hash]['procList'] += [proc]
+
 
   else:
     cmd ='cd brainPainterRepo;  configFile=../%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
@@ -174,7 +176,7 @@ def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
   zipLocation = '%s/figures.zip' % srcFld
 
   return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled=galleryDisabled,
-                         zipLocation=zipLocation, figDescsShort=figDescsShort, hash=hash)
+                         zipLocation=zipLocation, figDescsShort=figDescsShort, hash=hash, errorImageGen=0)
 
 
 
@@ -193,34 +195,10 @@ def index():
       return redirect(request.url)
     if file and allowed_file(file.filename):
       import random
-      # hash = ''.join(random.choice('0123456789ABCDEF') for i in range(16))
-      # filename = hash + '_' + secure_filename(file.filename)
 
-      # fullFilePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-      # file.save(fullFilePath)
-      # processFile(hash, fullFilePath)
-
-  # form = ReusableForm()
 
   return renderDefTemplate()
 
-  # figPaths = [0, 0, 0, 0, 0, 0]
-  # srcFld = '../static/example'
-  #
-  # figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
-  # figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
-  # figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
-  # figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
-  # figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
-  # figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
-  #
-  #
-  # figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-  # figDescsShort = [x[:17] for x in figDescs]
-  # zipLocation = '%s/figures.zip' % srcFld
-  #
-  # return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled='disabled', zipLocation=zipLocation, figDescsShort=figDescsShort)
 
 
 
@@ -280,6 +258,10 @@ def generated():
       partialFilePath = 'generated/%s/%s' % (hash, filename)
       errorMsgs = []
 
+      global procDetails
+      procDetails[hash] = {}
+      procDetails[hash]['procList'] = []
+
       for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
         CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
         errorMsgs += [processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
@@ -314,6 +296,9 @@ def generateForHash(hash):
     zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
     os.system(zipCmd)
 
+    # if errorImgGen = 1, then some images could not be generated
+    errorImgGen = request.args.get('error', None)
+
 
     figPaths = glob.glob("%s/*.png" % EXP_DIR)
     figPaths = list(np.sort(figPaths))
@@ -331,7 +316,7 @@ def generateForHash(hash):
     # return render_template('processing.html', hash=json.dumps(hash))
 
     return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='',
-                           zipLocation=zipLocation, figDescsShort=figDescsShort, hash=json.dumps(hash))
+                           zipLocation=zipLocation, figDescsShort=figDescsShort, hash=json.dumps(hash), errorImgGen=errorImgGen)
 
 
 @app.route('/progress/<hash>')
@@ -344,13 +329,21 @@ def progress(hash):
     os.system('pwd')
     global procDetails
     print('imagesSoFar', imagesSoFar)
-    print(procDetails)
+    print('procDetails', procDetails)
     nrRowsDf = procDetails[hash]['nrRowsDf']
     progress = int(100 * float(nrImagesSoFar) / (nrRowsDf * 3))
 
-    print(str(progress))
+    procFinished = [p.poll() is not None for p in procDetails[hash]['procList']]
+    print('procFinished', procFinished)
 
-    return jsonify(newProgress=progress)
+    error = 0
+    if np.all(procFinished) and progress < 100:
+      # some images were not generated, throw error
+      error = 1
+
+    print('progress', progress)
+
+    return jsonify(newProgress=progress, error=error)
 
 def parseCommaSepStr(strCol, convFunc=float):
   if strCol != '':

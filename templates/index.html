@@ -69,6 +69,9 @@
             <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use & Videos</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#news">News</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#about">About</a>
           </li>
         </ul>
@@ -113,10 +116,11 @@
   <script src="/static/jscolor.js"></script>
 
   <!-- Customise Section -->
-  <section id="run" class="projects-section bg-light">
+  <section id="run" class="bg-light">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
+            <br><br>
           <h2 class="text-black mb-4 text-center">Run BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -217,11 +221,12 @@
   {% endif %}
 
 
-        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation. (Progress bar will be implemented soon)
+        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). If you need to process more than 20 images, either send it in batches or do it locally on
+        your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>.
         <br><br>
-
-        Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>. Please email me (razvan at csail.mit.edu) if you encounter any errors.
+        Please email me (razvan [at] csail.mit.edu) if you encounter any errors.
         <a name="gallery"></a>
+        <br><br><br><br>
     </div>
   </section>
 
@@ -242,7 +247,13 @@
 
 
           {% else %}
+            {% if errorImgGen == '1' %}
+                <h2 class="text-black mb-4 "><font color="red"> Not all images could be generated! Double check input file</font></h2>
+
+            {% else %}
             <h2 class="text-black mb-4 ">Your generated images are ready to download!</h2>
+            {% endif %}
+
             <p align="left">  Images were generated on:
             <script>
               var d = new Date();
@@ -344,10 +355,11 @@
 
 
   <!-- Example Uses Section -->
-  <section id="examples"  class="projects-section bg-light text-center">
+  <section id="examples"  class="bg-light text-center">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
+            <br><br>
           <h2 class="text-black mb-4">Example uses of BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -427,9 +439,29 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
   </section>
 
 
+   <!-- News Section -->
+  <section id="news" class="bg-light ">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4 text-center">News/Updates</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
+        </div>
+      </div>
 
- <!-- Advanced use Section -->
-  <section id="about" class="projects-section bg-light ">
+    <ul>
+        <li> October 2019: We will present BrainPainter at the MICCAI <a href="http://crystal.uta.edu/~mbia/">MBIA workshop</a> in Shenzhen.</li>
+        <li> Sept 2019: We now perform input file checking and show the errors (no more silent fail).</li>
+
+    </ul>
+    <br><br>
+
+    </div>
+  </section>
+
+ <!-- About Section -->
+  <section id="about">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
@@ -446,6 +478,7 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
     <br><br>
 
       If you experience any issues, please email me (razvan [at] csail.mit.edu) or raise an issue on the <a href="https://github.com/mrazvan22/brain-coloring">github page</a>.
+        <br><br>
 
     </div>
   </section>
