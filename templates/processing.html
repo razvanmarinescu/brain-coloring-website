@@ -106,6 +106,9 @@
                 </div>
               </div>
           </div>
+          <div id="myModalBody" class="modal-body">
+
+          </div>
         </div>
       </div>
     </div>
@@ -199,6 +202,9 @@ var i = 0;
 iterations = 2000;
 var myProgBar = document.getElementById("myProgBar");
 var hash = {{hash|safe}}
+var finished = 0
+var myModalBody = document.getElementById("myModalBody");
+
 function loop() {
 
     $.get('progress/' + hash, function(data) {
@@ -208,17 +214,32 @@ function loop() {
     myProgBar.innerHTML = data.newProgress + '%';
 
         if (data.newProgress == 100){
-            window.location = '/generated/' + hash;
+            finished = 1
+            newLoc = '/generated/' + hash
+            window.location = newLoc;
+            myModalBody.innerHTML = 'Images generated successfully. See results <a href="' + newLoc + '">here</a>';
+            setTimeout(loop, 30000)
+            return finished
         }
         if (data.error == 1){
-            window.location = '/generated/' + hash + '?error=' + data.error;
+            setTimeout(loop, 1000)
+            finished = 1
+            newLoc = '/generated/' + hash + '?error=' + data.error;
+            window.location = newLoc;
+            myModalBody.innerHTML = 'Some images could not be generated. See results <a href="' + newLoc + '">here</a>';
+            setTimeout(loop, 30000)
+            return finished
+
         }
 
     })
+<!--    document.write('finished bla bla' + finished + '\n')-->
 
+    if (finished == 1){
+      return finished
+    }
 
-
-    setTimeout(loop, 1000)
+    setTimeout(loop, 3000)
 
 }
 

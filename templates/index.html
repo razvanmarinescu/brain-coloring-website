@@ -271,7 +271,7 @@
       <!-- Images used to open the lightbox -->
       <div class="row">
         {% for i in range(figPaths|length): %}
-          <div class="column">
+          <div class="column" style="text-align:center">
             {{figDescsShort[i]}}
             <img src="{{figPaths[i]}}"  style="width:100%" onclick="openModal();currentSlide({{i+1}})" class="hover-shadow">
           </div>

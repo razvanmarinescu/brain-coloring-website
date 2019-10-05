@@ -130,15 +130,16 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     HOST_DIR = '%s/static/generated/' % REPO_DIR
     DOCKER_DIR = '/home/brain-coloring/generated/'
     IMG_NAME = 'mrazvan22/brain-coloring'
-    INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+    INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py > %s/%s_log.txt' % (CONFIG_FILE, OUTPUT_FOLDER, IMG_TYPE)
 
     cmd = 'docker run  --mount src=%s,target=%s,type=bind' \
           ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
 
     print(cmd)
+    os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
+
     # os.system(cmd)
 
-    # os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
     proc = subprocess.Popen(
       cmd,  # call something with a lot of output so we can see it
       shell=True,
@@ -146,12 +147,15 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
       universal_newlines=True
     )
 
-
-    #TODO
+    # DOCKER_CMD = 'configFile=%s blender --background --python blendCreateSnapshot.py' % CONFIG_FILE
+    #
     # client = docker.from_env()
-    # container = client.containers.run(IMG_NAME, command=INNER_CMD, working_dir
-    #                                   volumes={HOST_DIR: {'bind': DOCKER_DIR, 'mode': 'rw'}}, detach=True)
+    # volumes = {HOST_DIR: {'bind': DOCKER_DIR, 'mode': 'rw'}}
+    # container = client.containers.run(IMG_NAME, command='/bin/bash; echo "--------XXXXXXXX-------"; ls; pwd', working_dir='/home/brain-coloring',
+    #                                   volumes=volumes, detach=True)
+    # print('logs', container.logs())
 
+    # asd
 
     procDetails[hash]['procList'] += [proc]
     # procDetails[hash]['procList'] += [container]
@@ -302,8 +306,14 @@ def generated():
 def generateForHash(hash):
     EXP_DIR = 'static/generated/%s' % hash
 
-    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png' % hash
-    os.system(zipCmd)
+    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png *.txt' % hash
+    subprocess.Popen(
+      zipCmd,  # call something with a lot of output so we can see it
+      shell=True,
+      stdout=subprocess.PIPE,
+      universal_newlines=True
+    )
+    # os.system(zipCmd)
 
     # if errorImgGen = 1, then some images could not be generated
     errorImgGen = request.args.get('error', None)
@@ -315,7 +325,8 @@ def generateForHash(hash):
     figPaths = ['../../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
 
     figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-    figDescsShort = [x[:17] for x in figDescs]
+    figDescsShort = ['_'.join(x.split('_')[1:]) for x in figDescs]
+    figDescsShort = [x[:17] for x in figDescsShort]
     print('figPaths', figPaths)
     print('figDescs', figDescs)
     # asda
@@ -342,6 +353,7 @@ def progress(hash):
     nrRowsDf = procDetails[hash]['nrRowsDf']
     progress = int(100 * float(nrImagesSoFar) / (nrRowsDf * 3))
 
+    # A None value indicates that the process hasn't terminated yet.
     procFinished = [p.poll() is not None for p in procDetails[hash]['procList']]
     print('procFinished', procFinished)
 
