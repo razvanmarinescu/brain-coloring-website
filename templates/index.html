@@ -36,9 +36,15 @@
 
   <link href="/static/gallery.css" rel="stylesheet">
 
+  <meta http-equiv="Expires" content="Fri, 04 Oct 2019 12:12:12 GMT">
+
 </head>
 
 <body id="page-top">
+
+
+
+
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
@@ -63,6 +69,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use & Videos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#news">News</a>
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#about">About</a>
@@ -99,20 +108,21 @@
       </div>
 
 
-    <br><br><img src="static/diagram_front_page.png"  style="width:100%" align="middle">
+    <br><br><img src="/static/diagram_front_page.png"  style="width:100%" align="middle">
 
     <br><br><center><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a></center><br><br>
 
     </div>
   </section>
 
-  <script src="static/jscolor.js"></script>
+  <script src="/static/jscolor.js"></script>
 
   <!-- Customise Section -->
-  <section id="run" class="projects-section bg-light">
+  <section id="run" class="bg-light">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
+            <br><br>
           <h2 class="text-black mb-4 text-center">Run BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -121,7 +131,7 @@
 
 
 
-    <form method=post enctype=multipart/form-data action=generated>
+    <form method=post enctype=multipart/form-data action="/generated">
      <div class="form-group row">
       <div class="col-3">
         <label for="exampleFormControlSelect1">Atlas</label>
@@ -179,23 +189,49 @@
     </div>
 
       <p>If more than two colours are desired for interpolation, make sure the input biomarker range is scaled to 0-5, to use up to the 5th colour for interpolation.</p><br><br>
+  <a name="error"></a>
 
     Upload input data file (.csv) according to these templates (max 20 different rows):
       <ul>
-        <li><a href="static/DK_template.csv"> Desikan-Killiany template</a>:</li>
-        <li><a href="static/Destrieux_template.csv"> Destrieux template</a>:</li>
-        <li><a href="static/Tourville_template.csv"> Tourville template</a>:</li>
+        <li><a href="/static/DK_template.csv"> Desikan-Killiany template</a>:</li>
+        <li><a href="/static/Destrieux_template.csv"> Destrieux template</a>:</li>
+        <li><a href="/static/Tourville_template.csv"> Tourville template</a>:</li>
       </ul>
+
+
 
     <input type=file name=file>
     <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >
+<!--    <input type=submit value="Generate" class="btn btn-primary js-scroll-trigger" >-->
   </form>
-        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). <b>Do not</b> refresh the page while processing takes place, otherwise you will need to re-run the generation. (Progress bar will be implemented soon)
-        <br><br>
 
-        Finally, if you need to process more than 20 images, either send it in batches or do it locally on your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>. Please email me (razvan at csail.mit.edu) if you encounter any errors.
+  {% with messages = get_flashed_messages() %}
+     {% if messages %}
+        <br><h1><font color="red">Errors:</font></h1>
+        <ul>
+           {% for message in messages %}
+            <font color="red">{{ message }}</font> <br><br>
+           {% endfor %}
+        </ul>
+     {% endif %}
+  {% endwith %}
+
+  {% if result %}
+      {% for line in result %}
+        {{ line }}
+      {% endfor %}
+  {% endif %}
+
+        <a name="gallery"></a>
+        <br>Processing usually takes around 15 seconds for each brain (set of 3 images). If you need to process more than 20 images, either send it in batches or do it locally on
+        your computer using the <a href="https://github.com/mrazvan22/brain-coloring">source code</a>.
+        <br><br>
+        Please email me (razvan [at] csail.mit.edu) if you encounter any errors.
+
+        <br><br><br><br>
     </div>
   </section>
+
 
 
 
@@ -204,7 +240,7 @@
     <div class="container">
       <div class="row">
 <!--        <a href="{{ url_for('.index', _anchor='gallery') }}">Anchor</a>-->
-        <a name="gallery"></a>
+
         <div class="col-lg-8 mx-auto">
           <br><br>
           {% if galleryDisabled == 'disabled' %}
@@ -213,7 +249,13 @@
 
 
           {% else %}
+            {% if errorImgGen == '1' %}
+                <h2 class="text-black mb-4 "><font color="red"> Not all images could be generated! Double check input file</font></h2>
+            Download the figures.zip file and check the error logs. If it's not an issue with the input file, do raise an issue on the <a href="https://github.com/mrazvan22/brain-coloring">github</a> page.<br><br>
+            {% else %}
             <h2 class="text-black mb-4 ">Your generated images are ready to download!</h2>
+            {% endif %}
+
             <p align="left">  Images were generated on:
             <script>
               var d = new Date();
@@ -231,7 +273,7 @@
       <!-- Images used to open the lightbox -->
       <div class="row">
         {% for i in range(figPaths|length): %}
-          <div class="column">
+          <div class="column" style="text-align:center">
             {{figDescsShort[i]}}
             <img src="{{figPaths[i]}}"  style="width:100%" onclick="openModal();currentSlide({{i+1}})" class="hover-shadow">
           </div>
@@ -284,15 +326,10 @@
   <!-- End of Gallery code-->
       {% endif %}
 
-<!--   <script>-->
-<!--   var converter = new showdown.Converter(),-->
-<!--    text      = '# hello, markdown!',-->
-<!--    html      = converter.makeHtml(text);-->
-<!--    document.write(html)-->
-<!--   </script>-->
 
 
-            <br><br><div align="left">
+
+        <br><br><div align="left">
        <p  align="left">
 
   {% filter markdown %}
@@ -314,11 +351,17 @@
     </div>
   </section>
 
+
+
+
+
+
   <!-- Example Uses Section -->
-  <section id="examples"  class="projects-section bg-light text-center">
+  <section id="examples"  class="bg-light text-center">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
+            <br><br>
           <h2 class="text-black mb-4">Example uses of BrainPainter</h2>
 <!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
         </div>
@@ -331,7 +374,7 @@
 
 Cortical - outer   | Cortical - inner   |  Subcortical
 :-------------------------:|:------------------:|:-----------------:
-![Cortical surface](static/outer_small.gif) | ![Cortical surface back](static/inner_small.gif)   |  ![Subcortical structures](static/subcortical_small.gif)
+![Cortical surface](/static/outer_small.gif) | ![Cortical surface back](/static/inner_small.gif)   |  ![Subcortical structures](/static/subcortical_small.gif)
 &nbsp;
 
 Animation created using BrainPainter, showing progression of amyloid deposition in Alzheimer's. By [Garbarino and Lorenzi, IPMI, 2019](https://arxiv.org/pdf/1901.10545.pdf)
@@ -339,10 +382,10 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
 {% endfilter %}<br><br><br>
          </center>
 
-        <img src="static/young_sustain.png"  style="width:60%" align="middle"><br><br>
+        <img src="/static/young_sustain.png"  style="width:60%" align="middle"><br><br>
        Brain images generated using BrainPainter, showing atrophy progression in Alzheimer's subtypes. By <a href="https://www.nature.com/articles/s41467-018-05892-0">Young et al., Nature Comms., 2018<a/><br><br><br>
 
-        <img src="static/peter_subcortical.jpg"  style="width:60%"><br><br>
+        <img src="/static/peter_subcortical.jpg"  style="width:60%"><br><br>
        Atrophy progression for subcortical regions in Huntington's disease. By <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/acn3.558">Wijeratne et al, Ann. Clin. Neurol., 2018</a>.<br><br><br>
 
 
@@ -398,9 +441,29 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
   </section>
 
 
+   <!-- News Section -->
+  <section id="news" class="bg-light ">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <br><br>
+          <h2 class="text-black mb-4 text-center">News/Updates</h2>
+<!--          <p class="text-white-50">Customise the type of brain images, atlases, resolution, and many more:</p>-->
+        </div>
+      </div>
 
- <!-- Advanced use Section -->
-  <section id="about" class="projects-section bg-light ">
+    <ul>
+        <li> October 2019: We will present BrainPainter at the MICCAI <a href="http://crystal.uta.edu/~mbia/">MBIA workshop</a> in Shenzhen.</li>
+        <li> Sept 2019: We now perform input file checking and show the errors (no more silent fail).</li>
+
+    </ul>
+    <br><br>
+
+    </div>
+  </section>
+
+ <!-- About Section -->
+  <section id="about">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
@@ -417,6 +480,7 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
     <br><br>
 
       If you experience any issues, please email me (razvan [at] csail.mit.edu) or raise an issue on the <a href="https://github.com/mrazvan22/brain-coloring">github page</a>.
+        <br><br>
 
     </div>
   </section>
@@ -594,8 +658,17 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
       {% if galleryDisabled != 'disabled' %}
-        <script> window.location.hash="gallery"; </script>
+        <script>
+        window.location.hash="gallery";
+        window.scrollTo(window.scrollX, window.scrollY - 100);
+        </script>
       {% endif %}
+
+      {% with messages = get_flashed_messages() %}
+         {% if messages %}
+           <script> window.location.hash="error"; </script>
+         {% endif %}
+      {% endwith %}
 
     <script>// For todays date;
 Date.prototype.today = function () {
@@ -608,6 +681,7 @@ Date.prototype.timeNow = function () {
 }</script>
 
 <!--<script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.1/dist/showdown.min.js"></script>-->
+
 
 
 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145859009-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-145859009-1');
+  </script>
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>BrainPainter - Visualisation of Brain Structures, Biomarkers and Associated Pathological Processes.</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/grayscale.css" rel="stylesheet">
+
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <link href="/static/gallery.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+
+
+
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#how">How it works</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#run">Run</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#gallery">Gallery</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#examples">Example Uses</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#advanced">Advanced Use & Videos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#about">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="masthead">
+    <div class="container d-flex h-100 align-items-center">
+      <div class="mx-auto text-center">
+        <h1 class="mx-auto my-0">BrainPainter</h1>
+        <h2 class="text-white-50 mx-auto mt-2 mb-5">A free software for visualisation of brain structures, biomarkers and associated pathological processes.</h2>
+        <a href="#how" class="btn btn-primary js-scroll-trigger">How it works</a>
+<!--         <br><br><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a>-->
+      </div>
+    </div>
+  </header>
+
+
+
+          <!-- Modal -->
+    <div class="modal fade" id="pleaseWaitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true" data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h1>Processing...</h1>
+          </div>
+          <div class="modal-body">
+              <div class="progress">
+                <div id="myProgBar" class="progress-bar  progress-bar-striped" role="progressbar" aria-valuenow="70"
+                  aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                  70%
+                </div>
+              </div>
+          </div>
+          <div id="myModalBody" class="modal-body">
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+  <!-- Contact Section -->
+  <section class="contact-section bg-black">
+    <div class="container">
+
+
+      <div class="social d-flex justify-content-center">
+        <a href="https://twitter.com/RazMarinescu" class="mx-2">
+          <i class="fab fa-twitter"></i>
+        </a>
+<!--        <a href="#" class="mx-2">-->
+<!--          <i class="fab fa-facebook-f">https://www.facebook.com/mrazvan22</i>-->
+<!--        </a>-->
+        <a href="https://github.com/mrazvan22/brain-coloring" class="mx-2">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black small text-center text-white-50">
+    <div class="container">
+      Copyright &copy; Razvan Marinescu<br>
+      BrainPainter is free and open source software licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en_GB">Creative Commons BY-SA license</a> .
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/vendor/jquery/jquery.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="/static/js/grayscale.min.js"></script>
+
+
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+      {% if galleryDisabled != 'disabled' %}
+        <script> window.location.hash="gallery"; </script>
+      {% endif %}
+
+      {% with messages = get_flashed_messages() %}
+         {% if messages %}
+           <script> window.location.hash="error"; </script>
+         {% endif %}
+      {% endwith %}
+
+    <script>// For todays date;
+Date.prototype.today = function () {
+    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"/"+ this.getFullYear();
+}
+
+// For the time now
+Date.prototype.timeNow = function () {
+     return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}</script>
+
+<!--<script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.1/dist/showdown.min.js"></script>-->
+
+<script>
+
+var pleaseWait = $('#pleaseWaitDialog');
+
+showPleaseWait = function() {
+    pleaseWait.modal('show');
+};
+
+hidePleaseWait = function () {
+    pleaseWait.modal('hide');
+};
+
+
+
+
+</script>
+
+<script>
+
+var i = 0;
+iterations = 2000;
+var myProgBar = document.getElementById("myProgBar");
+var hash = {{hash|safe}}
+var finished = 0
+var myModalBody = document.getElementById("myModalBody");
+
+function loop() {
+
+    $.get('progress/' + hash, function(data) {
+<!--                document.write('progress client-side:' + data.newProgress);-->
+<!--                $('myProgBar').attr('aria-valuenow', data.newProgress).css('width', data.newProgress);-->
+    myProgBar.style.width = data.newProgress + '%';
+    myProgBar.innerHTML = data.newProgress + '%';
+
+        if (data.newProgress == 100){
+            finished = 1
+            newLoc = '/generated/' + hash
+            window.location = newLoc;
+            myModalBody.innerHTML = 'Images generated successfully. See results <a href="' + newLoc + '">here</a>';
+            setTimeout(loop, 30000)
+            return finished
+        }
+        if (data.error == 1){
+            setTimeout(loop, 1000)
+            finished = 1
+            newLoc = '/generated/' + hash + '?error=' + data.error;
+            window.location = newLoc;
+            myModalBody.innerHTML = 'Some images could not be generated. See results <a href="' + newLoc + '">here</a>';
+            setTimeout(loop, 30000)
+            return finished
+
+        }
+
+    })
+<!--    document.write('finished bla bla' + finished + '\n')-->
+
+    if (finished == 1){
+      return finished
+    }
+
+    setTimeout(loop, 3000)
+
+}
+
+
+</script>
+
+<script>
+showPleaseWait();
+loop();
+
+
+</script>
+
+
+
+
+
+
+</body>
+
+</html>
