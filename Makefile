@@ -3,7 +3,7 @@ all:
 
 # use this to ensure everything runs ok
 test_on_prod:
-	/home/ubuntu/miniconda3/envs/razenv/bin/gunicorn main.py
+	/home/ubuntu/miniconda3/envs/razenv/bin/gunicorn wsgi
 
 	# then restart gunicorn server
 	sudo systemctl restart gunicorn
@@ -11,6 +11,9 @@ test_on_prod:
 	# see error log
 	journalctl -u gunicorn
 	
+
+# gunicorn setup here: sudo vim /etc/systemd/system/gunicorn.service
+# 
 
 docker:
 	docker run --mount src=/Users/razvan/research/brain-coloring-website/static/generated/,target=/home/brain-coloring/generated/,type=bind mrazvan22/brain-coloring:dev /bin/bash -c 'cd /home/brain-coloring; configFile=generated/A0A6A376286EF21C/cortical-outer_config.py blender --background --python blendCreateSnapshot.py' > log.txt
