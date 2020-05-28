@@ -34,7 +34,20 @@ This command will clone the BrainPainter code repo, create folder static/generat
  FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
 `
 
-The website will serve requests for drawing brain images to the BrainPainter version installed within the docker container `mrazvan22/brain-coloring`. The website server will also do the image creation in parallel by spawning multiple processes for each request. 
+If everything works, you should see the following:
+
+```
+FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
+ * Serving Flask app "main.py" (lazy loading)
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 175-529-670
+```
+
+The website will serve requests for drawing brain images to the BrainPainter version installed within the docker container `mrazvan22/brain-coloring`. The website server will also do the image creation in parallel by spawning multiple processes for each request. See function main:processFile()
 
 Note: There exists a docker API to interface with python, but I couldn't get it to work properly, so I'm running docker through unix processes instead.
 
