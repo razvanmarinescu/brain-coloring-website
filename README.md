@@ -6,33 +6,51 @@ For any issues, please email me: razvan (at) csail-mit-edu (replace dash with do
 and adapted from the grayscale template: https://startbootstrap.com/themes/grayscale/. It is published under the free, MIT license. 
 
 
+## Prerequisites
+
+Flask
+Docker
+Flask-Mikasa
+Pandas=0.24.2
 
 ## Installation
 
-1. Install Flask
+1. Install Flask and Flask-Misaka: 
 
-2. Install BrainPainter using docker: 
+```pip install -U Flask Flask-Misaka pandas=0.24.2```
+
+2. Install BrainPainter using docker (needs docker already installed): 
 
 `sudo docker run -it mrazvan22/brain-coloring`. 
 
 Once docker container finishes installation, it should automatically connect to the shell. Once inside docker, pull the latest changes if any:
 
-    ``` cd /home/brain-coloring/ ```
+``` 
+cd /home/brain-coloring/
     
-    ``` git pull origin master```
+git pull origin master
+```
 
 
-3. Log out of docker and install the BrainPainter code using:
+3. Log out of docker and clone this repo (website code only) using:
 
-  ``` make install ```
+``` 
+git clone https://github.com/mrazvan22/brain-coloring-website.git ; cd brain-coloring-website
+```
+
+Install the BrainPainter code using:
+
+``` 
+make install 
+```
 
 This command will clone the BrainPainter code repo, create folder static/generated as well as a symlink to it in main folder. These are required because images have to be under the static folder for displaying them on the webpage. Have a look at the Makefile for more details
 
 4. Run the website using flask:
 
-`
+```
  FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
-`
+```
 
 If everything works, you should see the following:
 
@@ -46,6 +64,44 @@ FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
  * Debugger is active!
  * Debugger PIN: 175-529-670
 ```
+
+5. Generate the  Flask secret key: 
+
+```
+>>> import os
+>>> os.urandom(12).hex()
+'f3cfe9ed8fae309f02079dbf'
+
+```
+
+Copy the secret key in a file `~/.flaskToken` (no extra newlines or space characters)
+
+```
+echo 'f3cfe9ed8fae309f02079dbf' > ~/.flaskToken
+```
+
+At this point, the website should be able to load, but not necessarily successfully process the images.  
+
+6. Set docker to work without sudo (more info [here](https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo) ):
+
+```
+sudo groupadd docker
+
+sudo gpasswd -a $USER docker
+```
+Then log out or restart docker using:
+
+```
+newgrp docker 
+
+```
+
+If it worked, it should be able to run `docker run hello-world` without sudo. 
+
+7. Test to see if you can upload a template file and run BrainPainter through the flask app. If it works, you should see the progress bar and the generated images after 30 seconds.
+
+
+## Development notes
 
 The website will serve requests for drawing brain images to the BrainPainter version installed within the docker container `mrazvan22/brain-coloring`. The website server will also do the image creation in parallel by spawning multiple processes for each request. See function main:processFile()
 
