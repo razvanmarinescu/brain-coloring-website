@@ -23,9 +23,10 @@ Once docker container finishes installation, it should automatically connect to 
 
 
 3. Log out of docker and install the BrainPainter code using:
+
   ``` make install ```
 
-This will clone the BrainPainter code repo, create folder static/generated as well as a symlink to it in main folder. These are required because images have to be under the static folder for displaying them on the webpage. Have a look at the Makefile for more details
+This command will clone the BrainPainter code repo, create folder static/generated as well as a symlink to it in main folder. These are required because images have to be under the static folder for displaying them on the webpage. Have a look at the Makefile for more details
 
 4. Run the website using flask:
 
@@ -33,6 +34,9 @@ This will clone the BrainPainter code repo, create folder static/generated as we
  FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
 `
 
+The website will serve requests for drawing brain images to the BrainPainter version installed within the docker container `mrazvan22/brain-coloring`. The website server will also do the image creation in parallel by spawning multiple processes for each request. 
+
+Note: There exists a docker API to interface with python, but I couldn't get it to work properly, so I'm running docker through unix processes instead.
 
 
 ## Customisation
