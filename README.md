@@ -5,6 +5,14 @@
 For any issues, please email me: razvan (at) csail-mit-edu (replace dash with dot). The website template is open-source 
 and adapted from the grayscale template: https://startbootstrap.com/themes/grayscale/. It is published under the free, MIT license. 
 
+## Features
+
+* Ideal starting template for serving results from research models
+* Central hosting on a server means users don't have to install the software (BrainPainter)
+* Interfaces with docker application 
+* Launches parallel processes for computational speed-up
+* Simple, customizable template served with Flask
+
 
 ## Prerequisites
 
