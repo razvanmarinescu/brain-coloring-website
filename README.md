@@ -8,10 +8,10 @@ and adapted from the grayscale template: https://startbootstrap.com/themes/grays
 
 ## Prerequisites
 
-Flask
-Docker
-Flask-Mikasa
-Pandas=0.24.2
+* Flask
+* Docker
+* Flask-Mikasa
+* Pandas=0.24.2
 
 ## Installation
 
