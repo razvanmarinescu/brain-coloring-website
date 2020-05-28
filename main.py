@@ -1,4 +1,3 @@
-
 import os
 from flask import *
 from werkzeug.utils import secure_filename
@@ -86,7 +85,8 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR)
-
+  
+  print('writing to CONFIG FILE: %s' % CONFIG_FILE)
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
 

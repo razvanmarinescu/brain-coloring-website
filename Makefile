@@ -1,3 +1,14 @@
+install:
+	# clone repo of BrainPainter code
+	git clone https://github.com/mrazvan22/brain-coloring.git
+	mv brain-coloring brainPainterRepo
+
+	# create folder under static to generate images, as only unders tatic one can display images on the website in Flask/Gunicorn 
+	mkdir -p static/generated
+
+	# create symlink also in main folder, as FLASK app 'generated' needs to be in main folder
+	ln -s static/generated generated
+
 all:
 	FLASK_APP=main.py FLASK_ENV=development FLASK_DEBUG=1 flask run
 
