@@ -19,7 +19,7 @@ and adapted from the grayscale template: https://startbootstrap.com/themes/grays
 * Flask
 * Docker
 * Flask-Mikasa
-* Pandas=0.24.2
+* Pandas==0.24.2
 
 ## Installation
 
