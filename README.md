@@ -25,7 +25,7 @@ and adapted from the grayscale template: https://startbootstrap.com/themes/grays
 
 1. Install Flask and Flask-Misaka: 
 
-```pip install -U Flask Flask-Misaka pandas=0.24.2```
+```pip install -U Flask Flask-Misaka pandas==0.24.2```
 
 2. Install BrainPainter using docker (needs docker already installed): 
 
@@ -35,7 +35,7 @@ Once docker container finishes installation, it should automatically connect to 
 
 ``` 
 cd /home/brain-coloring/
-    
+
 git pull origin master
 ```
 
@@ -108,6 +108,8 @@ If it worked, it should be able to run `docker run hello-world` without sudo.
 
 7. Test to see if you can upload a template file and run BrainPainter through the flask app. If it works, you should see the progress bar and the generated images after 30 seconds.
 
+If docker did not update changes try committing to the image:
+https://phoenixnap.com/kb/how-to-commit-changes-to-docker-image
 
 ## Development notes
 

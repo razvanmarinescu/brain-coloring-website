@@ -37,10 +37,10 @@ from brainPainterRepo import config
 
 BRAIN_TYPE = config.BRAIN_TYPE
 IMG_TYPE = config.IMG_TYPE
-COLORS_RGB =config.COLORS_RGB
+COLORS_RGB = config.COLORS_RGB
 RESOLUTION = config.RESOLUTION
 BACKGROUND_COLOR = config.BACKGROUND_COLOR
-
+IMG_SETTINGS = []
 
 DOCKER=True
 
@@ -95,7 +95,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   matDf = pd.read_csv(fullFilePath)
 
   global procDetails
-  procDetails[hash]['nrRowsDf'] = matDf.shape[0]
+  procDetails[hash]['nrRowsDf'] = matDf.shape[0] 
 
   if ATLAS == 'DK':
     cortAreasIndexMap = config.cortAreasIndexMapDK
@@ -208,7 +208,9 @@ def index():
       return redirect(request.url)
     if file and allowed_file(file.filename):
       import random
-
+    if IMG_SETTINGS == []:
+      flash('No modes/angles selected')
+      return redirect(request.url)
 
   return renderDefTemplate()
 
@@ -234,15 +236,17 @@ def generated():
       filename = hash + '_' + secure_filename(file.filename)
 
 
-
       print(request.form)
       print(request.form['c5'])
-
+      
       BRAIN_TYPE = request.form['brainType']
+      ANGLES = request.form.getlist('angles')
+      MODES = request.form.getlist('modes')
       COLORS_RGB = parseCol(request.form['c1']) + parseCol(request.form['c2']) + parseCol(request.form['c3']) + \
                    parseCol(request.form['c4']) + parseCol(request.form['c5'])
       BACKGROUND_COLOR = parseCol(request.form['backgroundCol'])[0]
       RESOLUTION = parseCommaSepStr(request.form['resolution'], int)[0]
+
       # asda
 
 
@@ -250,8 +254,23 @@ def generated():
       if ATLAS == 'Desikan-Killiany':
         ATLAS = 'DK'
 
+      # convert user input into image settings
+        
+      if 'cortical-outer' in MODES:
+        if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-right-hemisphere')
+        if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-left-hemisphere')
+      if 'cortical-inner' in MODES:
+        if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-right-hemisphere')
+        if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-left-hemisphere')
+      if 'subcortical' in MODES: IMG_SETTINGS.append('subcortical')
+      if 'top' in ANGLES: IMG_SETTINGS.append('top')
+      if 'bottom' in ANGLES: IMG_SETTINGS.append('bottom')
+      
+      if len(IMG_SETTINGS) == 0: 
+        flash('No angles/modes selected')
+        return redirect(request.url) 
 
-
+      print('IMAGE SETTINGS', IMG_SETTINGS) 
       print('BRAIN_TYPE', BRAIN_TYPE)
       print('COLORS_RGB', COLORS_RGB)
       print('BACKGROUND_COLOR', BACKGROUND_COLOR)
@@ -275,7 +294,7 @@ def generated():
       procDetails[hash] = {}
       procDetails[hash]['procList'] = []
 
-      for IMG_TYPE in ['cortical-outer', 'cortical-inner', 'subcortical']:
+      for IMG_TYPE in IMG_SETTINGS:
         CONFIG_FILE = 'generated/%s/%s_config.py' % (hash, IMG_TYPE)
         errorMsgs += [processFile(hash, partialFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                               BACKGROUND_COLOR, CONFIG_FILE, LOG_FILE)]
@@ -306,7 +325,7 @@ def generated():
 def generateForHash(hash):
     EXP_DIR = 'static/generated/%s' % hash
 
-    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png *.txt' % hash
+    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png *.txt *.tex' % hash
     subprocess.Popen(
       zipCmd,  # call something with a lot of output so we can see it
       shell=True,
@@ -351,7 +370,7 @@ def progress(hash):
     print('imagesSoFar', imagesSoFar)
     print('procDetails', procDetails)
     nrRowsDf = procDetails[hash]['nrRowsDf']
-    progress = int(100 * float(nrImagesSoFar) / (nrRowsDf * 3))
+    progress = int(100 * float(nrImagesSoFar) / (nrRowsDf * len(IMG_SETTINGS)))
 
     # A None value indicates that the process hasn't terminated yet.
     procFinished = [p.poll() is not None for p in procDetails[hash]['procList']]

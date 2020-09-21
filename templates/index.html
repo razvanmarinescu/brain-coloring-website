@@ -13,6 +13,7 @@
     gtag('config', 'UA-145859009-1');
   </script>
 
+  <link rel="icon" href="../static/img/favicon_io/favicon-32x32.png" type="image/png" sizes="16x16">
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -26,7 +27,7 @@
 
   <!-- Custom fonts for this template -->
   <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template -->
@@ -85,7 +86,7 @@
   <header class="masthead">
     <div class="container d-flex h-100 align-items-center">
       <div class="mx-auto text-center">
-        <h1 class="mx-auto my-0">BrainPainter</h1>
+        <h1>BrainPainter</h1>
         <h2 class="text-white-50 mx-auto mt-2 mb-5">A free software for visualisation of brain structures, biomarkers and associated pathological processes.</h2>
         <a href="#how" class="btn btn-primary js-scroll-trigger">How it works</a>
 <!--         <br><br><a href="#run" class="btn btn-primary js-scroll-trigger">Get Started</a>-->
@@ -150,7 +151,40 @@
           <option>white</option>
         </select>
 
+        <br><br>
 
+        <label for="exampleFormControlSelect1">Angles</label>
+        <select class="form-control" id="angles" name="angles" multiple>
+          <option value="right-hemisphere" selected>Right-Hemisphere</option>
+          <option value="left-hemisphere">Left-Hemisphere</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+        </select>
+
+        <br><br>
+
+        <label for="exampleFormControlSelect1">Modes</label>
+        <select class="form-control" id="modes" name="modes" multiple>
+          <option value="cortical-outer" selected>Cortical-Outer</option>
+          <option value="cortical-inner" selected>Cortical-Inner</option>
+          <option value="subcortical" selected>subcortical</option>
+        </select>
+
+        <script>
+          $('option').mousedown(function(e) {
+              e.preventDefault();
+              var originalScrollTop = $(this).parent().scrollTop();
+              console.log(originalScrollTop);
+              $(this).prop('selected', $(this).prop('selected') ? false : true);
+              var self = this;
+              $(this).parent().focus();
+              setTimeout(function() {
+                  $(self).parent().scrollTop(originalScrollTop);
+              }, 0);
+              
+              return false;
+          });
+        </script>
       </div>
 
 
@@ -322,7 +356,7 @@
          </div>
 
       {% if galleryDisabled != 'disabled' %}
-      <br><p align="left">Note: If the images are not good, change the settings and regenerate them. </p>
+      <br><p align="left">Note: If the images are not good, change the settings and regenerate them. <br>If not all images generated, try refreshing the page.</p>
   <!-- End of Gallery code-->
       {% endif %}
 
@@ -562,9 +596,9 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
         <a href="https://twitter.com/RazMarinescu" class="mx-2">
           <i class="fab fa-twitter"></i>
         </a>
-<!--        <a href="#" class="mx-2">-->
-<!--          <i class="fab fa-facebook-f">https://www.facebook.com/mrazvan22</i>-->
-<!--        </a>-->
+      <!--        <a href="#" class="mx-2">-->
+      <!--          <i class="fab fa-facebook-f">https://www.facebook.com/mrazvan22</i>-->
+      <!--        </a>-->
         <a href="https://github.com/mrazvan22/brain-coloring" class="mx-2">
           <i class="fab fa-github"></i>
         </a>
@@ -576,7 +610,7 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
   <!-- Footer -->
   <footer class="bg-black small text-center text-white-50">
     <div class="container">
-      Copyright &copy; Razvan Marinescu<br>
+      Copyright &copy; <a href="https://www.mit.edu/~razvan/">Razvan Marinescu</a><br>
       BrainPainter is free and open source software licensed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en_GB">Creative Commons BY-SA license</a> .
     </div>
   </footer>
