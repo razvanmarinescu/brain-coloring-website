@@ -151,7 +151,40 @@
           <option>white</option>
         </select>
 
+        <br><br>
 
+        <label for="exampleFormControlSelect1">Angles</label>
+        <select class="form-control" id="angles" name="angles" multiple>
+          <option value="right-hemisphere" selected>Right-Hemisphere</option>
+          <option value="left-hemisphere">Left-Hemisphere</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+        </select>
+
+        <br><br>
+
+        <label for="exampleFormControlSelect1">Modes</label>
+        <select class="form-control" id="modes" name="modes" multiple>
+          <option value="cortical-outer" selected>Cortical-Outer</option>
+          <option value="cortical-inner" selected>Cortical-Inner</option>
+          <option value="subcortical" selected>subcortical</option>
+        </select>
+
+        <script>
+          $('option').mousedown(function(e) {
+              e.preventDefault();
+              var originalScrollTop = $(this).parent().scrollTop();
+              console.log(originalScrollTop);
+              $(this).prop('selected', $(this).prop('selected') ? false : true);
+              var self = this;
+              $(this).parent().focus();
+              setTimeout(function() {
+                  $(self).parent().scrollTop(originalScrollTop);
+              }, 0);
+              
+              return false;
+          });
+        </script>
       </div>
 
 
@@ -323,7 +356,7 @@
          </div>
 
       {% if galleryDisabled != 'disabled' %}
-      <br><p align="left">Note: If the images are not good, change the settings and regenerate them. </p>
+      <br><p align="left">Note: If the images are not good, change the settings and regenerate them. <br>If not all images generated, try refreshing the page.</p>
   <!-- End of Gallery code-->
       {% endif %}
 
