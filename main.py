@@ -129,7 +129,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   if DOCKER:
     HOST_DIR = '%s/static/generated/' % REPO_DIR
     DOCKER_DIR = '/home/brain-coloring/generated/'
-    IMG_NAME = 'mrazvan22/brain-coloring'
+    IMG_NAME = 'mrazvan22/brain-coloring-v2'
     INNER_CMD = 'cd /home/brain-coloring; configFile=%s blender --background --python blendCreateSnapshot.py > %s/%s_log.txt' % (CONFIG_FILE, OUTPUT_FOLDER, IMG_TYPE)
 
     cmd = 'docker run  --mount src=%s,target=%s,type=bind' \
@@ -325,14 +325,24 @@ def generated():
 def generateForHash(hash):
     EXP_DIR = 'static/generated/%s' % hash
 
-    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png *.txt *.tex' % hash
+    print('running pdflatex')
+    pdflatexCmd = 'cd static/generated/%s; pdflatex report.tex' % hash
+    #os.system(pdflatexCmd)
+    #subprocess.Popen(
+    #  pdflatexCmd,  # call something with a lot of output so we can see it
+    #  shell=True,
+    #  stdout=subprocess.PIPE,
+    #  universal_newlines=True
+    #)
+
+    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
     subprocess.Popen(
       zipCmd,  # call something with a lot of output so we can see it
       shell=True,
       stdout=subprocess.PIPE,
       universal_newlines=True
     )
-    # os.system(zipCmd)
+    #os.system(zipCmd)
 
     # if errorImgGen = 1, then some images could not be generated
     errorImgGen = request.args.get('error', None)
@@ -422,4 +432,4 @@ if __name__ == '__main__':
     # sess.init_app(app)
 
     app.debug = True
-    app.run(host = '0.0.0.0', port=int("80"), debug=True)
+    app.run(host = '0.0.0.0', port=int("80"), processes=15, debug=True)
