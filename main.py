@@ -136,7 +136,8 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
           ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
 
     print(cmd)
-    os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
+    subprocess.Popen(('chmod -R 777 %s/%s' % (HOST_DIR, hash)), shell=True).wait()
+    # os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
 
     # os.system(cmd)
 
@@ -165,8 +166,8 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
     print(cmd)
     os.system('pwd')
-    os.system(cmd)
-
+    # os.system(cmd)
+    subprocess.Popen(cmd, shell=True).wait()
 
 
   return ''
@@ -283,7 +284,8 @@ def generated():
       EXP_DIR = '%s/static/generated/%s' % (REPO_DIR, hash)
       fullFilePath = os.path.join(EXP_DIR, filename)
       print('fullFilePath', fullFilePath)
-      os.system('mkdir -p %s' % EXP_DIR)
+      subprocess.Popen(('mkdir -p %s' % EXP_DIR), shell=True).wait()
+      # os.system('mkdir -p %s' % EXP_DIR)
       file.save(fullFilePath)
       LOG_FILE = '%s/log-blender.txt' % EXP_DIR
 
