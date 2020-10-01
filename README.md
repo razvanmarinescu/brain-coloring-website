@@ -29,7 +29,7 @@ and adapted from the grayscale template: https://startbootstrap.com/themes/grays
 
 2. Install BrainPainter using docker (needs docker already installed): 
 
-`sudo docker run -it mrazvan22/brain-coloring`. 
+`sudo docker run -it mrazvan22/brain-coloring-v2`. 
 
 Once docker container finishes installation, it should automatically connect to the shell. Once inside docker, pull the latest changes if any:
 

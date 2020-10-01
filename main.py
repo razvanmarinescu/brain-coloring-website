@@ -338,13 +338,13 @@ def generateForHash(hash):
     #)
 
     zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
-    subprocess.Popen(
-      zipCmd,  # call something with a lot of output so we can see it
-      shell=True,
-      stdout=subprocess.PIPE,
-      universal_newlines=True
-    )
-    #os.system(zipCmd)
+    # subprocess.Popen(
+    #   zipCmd,  # call something with a lot of output so we can see it
+    #   shell=True,
+    #   stdout=subprocess.PIPE,
+    #   universal_newlines=True
+    # )
+    os.system(zipCmd)
 
     # if errorImgGen = 1, then some images could not be generated
     errorImgGen = request.args.get('error', None)
