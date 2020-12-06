@@ -85,7 +85,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR)
-  
+
   print('writing to CONFIG FILE: %s' % CONFIG_FILE)
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
@@ -95,7 +95,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   matDf = pd.read_csv(fullFilePath)
 
   global procDetails
-  procDetails[hash]['nrRowsDf'] = matDf.shape[0] 
+  procDetails[hash]['nrRowsDf'] = matDf.shape[0]
 
   if ATLAS == 'DK':
     cortAreasIndexMap = config.cortAreasIndexMapDK
@@ -239,7 +239,7 @@ def generated():
 
       print(request.form)
       print(request.form['c5'])
-      
+
       BRAIN_TYPE = request.form['brainType']
       ANGLES = request.form.getlist('angles')
       MODES = request.form.getlist('modes')
@@ -256,7 +256,7 @@ def generated():
         ATLAS = 'DK'
 
       # convert user input into image settings
-        
+
       if 'cortical-outer' in MODES:
         if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-right-hemisphere')
         if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-left-hemisphere')
@@ -266,12 +266,12 @@ def generated():
       if 'subcortical' in MODES: IMG_SETTINGS.append('subcortical')
       if 'top' in ANGLES: IMG_SETTINGS.append('top')
       if 'bottom' in ANGLES: IMG_SETTINGS.append('bottom')
-      
-      if len(IMG_SETTINGS) == 0: 
-        flash('No angles/modes selected')
-        return redirect(request.url) 
 
-      print('IMAGE SETTINGS', IMG_SETTINGS) 
+      if len(IMG_SETTINGS) == 0:
+        flash('No angles/modes selected')
+        return redirect(request.url)
+
+      print('IMAGE SETTINGS', IMG_SETTINGS)
       print('BRAIN_TYPE', BRAIN_TYPE)
       print('COLORS_RGB', COLORS_RGB)
       print('BACKGROUND_COLOR', BACKGROUND_COLOR)
@@ -337,7 +337,7 @@ def generateForHash(hash):
     #  universal_newlines=True
     #)
 
-    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
+    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode --shell-escape report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
     subprocess.Popen(
       zipCmd,  # call something with a lot of output so we can see it
       shell=True,
