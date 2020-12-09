@@ -337,7 +337,7 @@ def generateForHash(hash):
     #  universal_newlines=True
     #)
 
-    zipCmd = 'cd static/generated/%s; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash # pdflatex -interaction=nonstopmode report.tex;
+    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash 
     subprocess.Popen(
       zipCmd,  # call something with a lot of output so we can see it
       shell=True,
