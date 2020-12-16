@@ -175,7 +175,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
 def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
   #figPaths = [0, 0, 0, 0, 0, 0]
-  srcFld = '../static/example2'
+  srcFld = 'static/example2'
 
   #figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
   #figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
@@ -185,7 +185,9 @@ def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
   #figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
 
 
+  #print('pwd', os.system('pwd'))
   figPaths = glob.glob("%s/*.png" % srcFld)
+  print('figPaths Def', figPaths)
   figPaths = list(np.sort(figPaths))
   #figPaths = ['../../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
 
