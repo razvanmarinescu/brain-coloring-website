@@ -370,6 +370,7 @@ def generateForHash(hash):
                            zipLocation=zipLocation, figDescsShort=figDescsShort, hash=json.dumps(hash), errorImgGen=errorImgGen)
 
 
+
 @app.route('/progress/<hash>')
 def progress(hash):
     EXP_DIR = 'static/generated/%s' % hash
