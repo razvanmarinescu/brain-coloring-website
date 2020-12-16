@@ -174,19 +174,30 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
 
 def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
-  figPaths = [0, 0, 0, 0, 0, 0]
-  srcFld = '../static/example'
+  #figPaths = [0, 0, 0, 0, 0, 0]
+  srcFld = '../static/example2'
 
-  figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
-  figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
-  figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
-  figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
-  figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
-  figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
+  #figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
+  #figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
+  #figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
+  #figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
+  #figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
+  #figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
 
+
+  figPaths = glob.glob("%s/*.png" % srcFld)
+  figPaths = list(np.sort(figPaths))
+  #figPaths = ['../../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
 
   figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-  figDescsShort = [x[:17] for x in figDescs]
+  figDescsShort = ['_'.join(x.split('_')[1:]) for x in figDescs]
+  figDescsShort = [x[:17] for x in figDescsShort]
+  print('figPaths Def', figPaths)
+  print('figDescs Def', figDescs)
+
+
+  #figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+  #figDescsShort = [x[:17] for x in figDescs]
   zipLocation = '%s/figures.zip' % srcFld
 
   return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled=galleryDisabled,
