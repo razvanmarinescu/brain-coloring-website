@@ -337,14 +337,14 @@ def generateForHash(hash):
     #  universal_newlines=True
     #)
 
-    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash 
-    subprocess.Popen(
-      zipCmd,  # call something with a lot of output so we can see it
-      shell=True,
-      stdout=subprocess.PIPE,
-      universal_newlines=True
-    )
-    # os.system(zipCmd)
+    zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
+    # subprocess.Popen(
+    #   zipCmd,  # call something with a lot of output so we can see it
+    #   shell=True,
+    #   stdout=subprocess.PIPE,
+    #   universal_newlines=True
+    # )
+    os.system(zipCmd)
 
     # if errorImgGen = 1, then some images could not be generated
     errorImgGen = request.args.get('error', None)
@@ -368,7 +368,6 @@ def generateForHash(hash):
 
     return render_template('index.html', figPaths=figPaths, figDescs=figDescs, galleryDisabled='',
                            zipLocation=zipLocation, figDescsShort=figDescsShort, hash=json.dumps(hash), errorImgGen=errorImgGen)
-
 
 
 @app.route('/progress/<hash>')
