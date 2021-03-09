@@ -7,8 +7,7 @@ from flask_misaka import Misaka
 import numpy as np
 import pandas as pd
 import subprocess
-import time
-import threading
+import shutil
 import json
 # from flask import jsonify
 
@@ -64,8 +63,10 @@ def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, C
   text += "RESOLUTION = %s" % str(RESOLUTION) + '\n\n'
   text += "BACKGROUND_COLOR = %s" % str(BACKGROUND_COLOR) + '\n\n'
   text += "cortAreasIndexMapDK = %s" % str(config.cortAreasIndexMapDK) + '\n\n'
+  text += "cortAreasIndexMapMice = %s" % str(config.cortAreasIndexMapMice) + '\n\n'
   text += "cortAreasIndexMapDestrieux = %s" % str(config.cortAreasIndexMapDestrieux) + '\n\n'
   text += "cortAreasIndexMapTourville = %s" % str(config.cortAreasIndexMapTourville) + '\n\n'
+  text += "subcortMouseAreasIndexMap = %s" % str(config.subcortMouseAreasIndexMap) + '\n\n'
   text += "subcortAreasIndexMap = %s" % str(config.subcortAreasIndexMap) + '\n\n'
   text += "requestFromWebsite = True" + '\n\n'
 
@@ -107,11 +108,14 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     cortAreasIndexMap = config.cortAreasIndexMapTourville
     subcortAreasIndexMap = config.subcortAreasIndexMap
     ATLAS = 'DKT'  # actually 3D models are labelled as DKT
+  elif ATLAS == 'Mice':
+      cortAreasIndexMap = config.cortAreasIndexMapMice
+      subcortAreasIndexMap = config.subcortMouseAreasIndexMap
   elif ATLAS == 'Custom':
     cortAreasIndexMap = config.cortAreasIndexMapCustom
     subcortAreasIndexMap = config.subcortAreasIndexMapCustom
   else:
-    raise ValueError('ATLAS has to be either \'DK\', \'Destrieux\', \'Tourville\' or \'Custom\' ')
+    raise ValueError('ATLAS has to be either \'DK\', \'Destrieux\', \'Tourville\', \'Mice\' or \'Custom\' ')
 
   cortRegionsThatShouldBeInTemplate = list(cortAreasIndexMap.values())
   subcortRegionsThatShouldBeInTemplate = list(subcortAreasIndexMap.values())
@@ -209,6 +213,13 @@ def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+  # genDir = glob.glob("generated/*/")
+  # if len(genDir) >= 9: 
+  #   # deletes generated subdirs after use
+  #   for subDir in genDir:
+  #     shutil.rmtree(subDir)
+  # print("Tau")
+
   if request.method == 'POST':
     # check if the post request has the file part
     if 'file' not in request.files:
