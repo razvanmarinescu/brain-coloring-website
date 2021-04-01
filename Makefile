@@ -37,3 +37,12 @@ movie:
 	docker run  --mount src=/Users/razvan/research/brain-coloring-website/static/generated/,target=/home/brain-coloring/generated/,type=bind mrazvan22/brain-coloring:dev /bin/bash -c 'cd /home/brain-coloring; configFile=generated/DK_movie/subcortical_config.py blender --background --python blendCreateSnapshot.py'
 
 	convert -delay 20 -loop 0 *.jpg myimage.gif
+
+update: 
+	docker pull mrazvan22/brain-coloring-v2
+
+	git pull 
+
+	cd brainPainterRepo; git pull; cd ..
+
+	ln -s static/generated generated

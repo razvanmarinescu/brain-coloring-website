@@ -287,9 +287,14 @@ def generated():
       if 'cortical-inner' in MODES:
         if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-right-hemisphere')
         if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-left-hemisphere')
-      if 'subcortical' in MODES: IMG_SETTINGS.append('subcortical')
-      if 'top' in ANGLES: IMG_SETTINGS.append('top')
-      if 'bottom' in ANGLES: IMG_SETTINGS.append('bottom')
+      if 'subcortical' in MODES: 
+        # IMG_SETTINGS.append('subcortical')
+        if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('subcortical-outer-right-hemisphere')
+        if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('subcortical-outer-left-hemisphere')
+        if 'top' in ANGLES: IMG_SETTINGS.append('subcortical-outer-top')
+        if 'bottom' in ANGLES: IMG_SETTINGS.append('subcortical-outer-bottom')
+      if 'top' in ANGLES: IMG_SETTINGS.append('cortical-top')
+      if 'bottom' in ANGLES: IMG_SETTINGS.append('cortical-bottom')
 
       if len(IMG_SETTINGS) == 0:
         flash('No angles/modes selected')
