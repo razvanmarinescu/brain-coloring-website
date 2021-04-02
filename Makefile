@@ -38,6 +38,16 @@ movie:
 
 	convert -delay 20 -loop 0 *.jpg myimage.gif
 
+# clear the generated directories and add symlink back
+clearspace:
+	rm -rf static/generated
+
+	mkdir -p static/generated
+
+	# make alias for generated dir
+	ln -s static/generated generated
+
+# get updates from docker, get updates to website repo
 update: 
 	docker pull mrazvan22/brain-coloring-v2
 
@@ -45,4 +55,6 @@ update:
 
 	cd brainPainterRepo; git pull; cd ..
 
-	ln -s static/generated generated
+	make clearspace
+
+	sudo systemctl restart gunicorn
