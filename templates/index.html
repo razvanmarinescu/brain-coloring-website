@@ -465,6 +465,17 @@ Animation created using BrainPainter, showing progression of amyloid deposition 
 
         </ul>
 
+      <h2 class="text-black mb-4 text-center">Generating Colorbar/Legend</h2>
+
+      For generating a colorbar/legend, you can use <a href="https://www.overleaf.com/read/fnhrgdzxhnsq
+"> this latex script</a> (instructions for using it in the script). It re-creates the default colorbar as on the website, but you can change the exact text labels on the colorbar.<br><br>
+
+      <b> Q: What if my biomarker data is not in the [0,5] range, but on a different scale/range?</b> If your biomarker data is on a different scale, e.g. [-2, 9.8], you can simply re-scale your biomarker data to 0-5, run BrainPainter to  generate the images using [0,5] as scale, then change the labels/tick-marks in the colorbar to [-2, 1, 4, 7, 9.8]. To be very precise, they should be [-2, 0.95, etc ...].    
+      <br><br>
+      <b>Q: What about using more than 5 colors?</b> You can do that, but need to run BrainPainter from the source code and change the config.py. You can also easily change the colorbar script to add more colors in the legend. 
+      
+      <br><br>  
+
       <h2 class="text-black mb-4 text-center">Videos</h2>
 
       For generating videos showing e.g. progression of pathology, you need to generate many images (25/sec), where each image is a new row in the input .csv spreadsheet. For example, to generate a 4-second video, you need 100 rows. The numbers you fill in need to change smoothly. After generating the images, you can find programs online/linux commandsto merge the frames into an animated gif.
