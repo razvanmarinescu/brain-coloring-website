@@ -7,8 +7,7 @@ from flask_misaka import Misaka
 import numpy as np
 import pandas as pd
 import subprocess
-import time
-import threading
+import shutil
 import json
 # from flask import jsonify
 
@@ -64,8 +63,10 @@ def generateConfigText(INPUT_FILE, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, C
   text += "RESOLUTION = %s" % str(RESOLUTION) + '\n\n'
   text += "BACKGROUND_COLOR = %s" % str(BACKGROUND_COLOR) + '\n\n'
   text += "cortAreasIndexMapDK = %s" % str(config.cortAreasIndexMapDK) + '\n\n'
+  text += "cortAreasIndexMapMice = %s" % str(config.cortAreasIndexMapMice) + '\n\n'
   text += "cortAreasIndexMapDestrieux = %s" % str(config.cortAreasIndexMapDestrieux) + '\n\n'
   text += "cortAreasIndexMapTourville = %s" % str(config.cortAreasIndexMapTourville) + '\n\n'
+  text += "subcortMouseAreasIndexMap = %s" % str(config.subcortMouseAreasIndexMap) + '\n\n'
   text += "subcortAreasIndexMap = %s" % str(config.subcortAreasIndexMap) + '\n\n'
   text += "requestFromWebsite = True" + '\n\n'
 
@@ -85,7 +86,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
   text = generateConfigText(fullFilePath, OUTPUT_FOLDER, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RESOLUTION,
                             BACKGROUND_COLOR)
-  
+
   print('writing to CONFIG FILE: %s' % CONFIG_FILE)
   with open(CONFIG_FILE, 'w') as f:
     f.write(text)
@@ -95,7 +96,7 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
   matDf = pd.read_csv(fullFilePath)
 
   global procDetails
-  procDetails[hash]['nrRowsDf'] = matDf.shape[0] 
+  procDetails[hash]['nrRowsDf'] = matDf.shape[0]
 
   if ATLAS == 'DK':
     cortAreasIndexMap = config.cortAreasIndexMapDK
@@ -107,11 +108,14 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
     cortAreasIndexMap = config.cortAreasIndexMapTourville
     subcortAreasIndexMap = config.subcortAreasIndexMap
     ATLAS = 'DKT'  # actually 3D models are labelled as DKT
+  elif ATLAS == 'Mice':
+      cortAreasIndexMap = config.cortAreasIndexMapMice
+      subcortAreasIndexMap = config.subcortMouseAreasIndexMap
   elif ATLAS == 'Custom':
     cortAreasIndexMap = config.cortAreasIndexMapCustom
     subcortAreasIndexMap = config.subcortAreasIndexMapCustom
   else:
-    raise ValueError('ATLAS has to be either \'DK\', \'Destrieux\', \'Tourville\' or \'Custom\' ')
+    raise ValueError('ATLAS has to be either \'DK\', \'Destrieux\', \'Tourville\', \'Mice\' or \'Custom\' ')
 
   cortRegionsThatShouldBeInTemplate = list(cortAreasIndexMap.values())
   subcortRegionsThatShouldBeInTemplate = list(subcortAreasIndexMap.values())
@@ -136,7 +140,8 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
           ' %s /bin/bash -c \'%s\' ' % (HOST_DIR, DOCKER_DIR, IMG_NAME, INNER_CMD)
 
     print(cmd)
-    os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
+    subprocess.Popen(('chmod -R 777 %s/%s' % (HOST_DIR, hash)), shell=True).wait()
+    # os.system('chmod -R 777 %s/%s' % (HOST_DIR, hash))
 
     # os.system(cmd)
 
@@ -165,27 +170,40 @@ def processFile(hash, fullFilePath, ATLAS, BRAIN_TYPE, IMG_TYPE, COLORS_RGB, RES
 
     print(cmd)
     os.system('pwd')
-    os.system(cmd)
-
+    # os.system(cmd)
+    subprocess.Popen(cmd, shell=True).wait()
 
 
   return ''
 
 
 def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
-  figPaths = [0, 0, 0, 0, 0, 0]
-  srcFld = '../static/example'
+  #figPaths = [0, 0, 0, 0, 0, 0]
+  srcFld = 'static/example2'
 
-  figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
-  figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
-  figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
-  figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
-  figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
-  figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
+  #figPaths[0] = '%s/Image_1_cortical-outer.png' % srcFld
+  #figPaths[1] = '%s/Image_1_cortical-inner.png' % srcFld
+  #figPaths[2] = '%s/Image_1_subcortical.png' % srcFld
+  #figPaths[3] = '%s/Image_2_cortical-outer.png' % srcFld
+  #figPaths[4] = '%s/Image_2_cortical-inner.png' % srcFld
+  #figPaths[5] = '%s/Image_2_subcortical.png' % srcFld
 
+
+  #print('pwd', os.system('pwd'))
+  figPaths = glob.glob("%s/*.png" % srcFld)
+  print('figPaths Def', figPaths)
+  figPaths = list(np.sort(figPaths))
+  #figPaths = ['../../static/generated/%s/%s' % (hash, x.split('/')[-1]) for x in figPaths]
 
   figDescs = [x.split('/')[-1][:-4] for x in figPaths]
-  figDescsShort = [x[:17] for x in figDescs]
+  figDescsShort = ['_'.join(x.split('_')[1:]) for x in figDescs]
+  figDescsShort = [x[:17] for x in figDescsShort]
+  print('figPaths Def', figPaths)
+  print('figDescs Def', figDescs)
+
+
+  #figDescs = [x.split('/')[-1][:-4] for x in figPaths]
+  #figDescsShort = [x[:17] for x in figDescs]
   zipLocation = '%s/figures.zip' % srcFld
 
   return render_template('index.html', figPaths = figPaths, figDescs = figDescs, galleryDisabled=galleryDisabled,
@@ -195,6 +213,13 @@ def renderDefTemplate(hash=json.dumps('testHash'), galleryDisabled='disabled'):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+  # genDir = glob.glob("generated/*/")
+  # if len(genDir) >= 9: 
+  #   # deletes generated subdirs after use
+  #   for subDir in genDir:
+  #     shutil.rmtree(subDir)
+  # print("Tau")
+
   if request.method == 'POST':
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -238,7 +263,7 @@ def generated():
 
       print(request.form)
       print(request.form['c5'])
-      
+
       BRAIN_TYPE = request.form['brainType']
       ANGLES = request.form.getlist('angles')
       MODES = request.form.getlist('modes')
@@ -255,22 +280,27 @@ def generated():
         ATLAS = 'DK'
 
       # convert user input into image settings
-        
+
       if 'cortical-outer' in MODES:
         if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-right-hemisphere')
         if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-outer-left-hemisphere')
       if 'cortical-inner' in MODES:
         if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-right-hemisphere')
         if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('cortical-inner-left-hemisphere')
-      if 'subcortical' in MODES: IMG_SETTINGS.append('subcortical')
-      if 'top' in ANGLES: IMG_SETTINGS.append('top')
-      if 'bottom' in ANGLES: IMG_SETTINGS.append('bottom')
-      
-      if len(IMG_SETTINGS) == 0: 
-        flash('No angles/modes selected')
-        return redirect(request.url) 
+      if 'subcortical' in MODES: 
+        # IMG_SETTINGS.append('subcortical')
+        if 'right-hemisphere' in ANGLES: IMG_SETTINGS.append('subcortical-outer-right-hemisphere')
+        if 'left-hemisphere' in ANGLES: IMG_SETTINGS.append('subcortical-outer-left-hemisphere')
+        if 'top' in ANGLES: IMG_SETTINGS.append('subcortical-outer-top')
+        if 'bottom' in ANGLES: IMG_SETTINGS.append('subcortical-outer-bottom')
+      if 'top' in ANGLES: IMG_SETTINGS.append('cortical-top')
+      if 'bottom' in ANGLES: IMG_SETTINGS.append('cortical-bottom')
 
-      print('IMAGE SETTINGS', IMG_SETTINGS) 
+      if len(IMG_SETTINGS) == 0:
+        flash('No angles/modes selected')
+        return redirect(request.url)
+
+      print('IMAGE SETTINGS', IMG_SETTINGS)
       print('BRAIN_TYPE', BRAIN_TYPE)
       print('COLORS_RGB', COLORS_RGB)
       print('BACKGROUND_COLOR', BACKGROUND_COLOR)
@@ -283,7 +313,8 @@ def generated():
       EXP_DIR = '%s/static/generated/%s' % (REPO_DIR, hash)
       fullFilePath = os.path.join(EXP_DIR, filename)
       print('fullFilePath', fullFilePath)
-      os.system('mkdir -p %s' % EXP_DIR)
+      subprocess.Popen(('mkdir -p %s' % EXP_DIR), shell=True).wait()
+      # os.system('mkdir -p %s' % EXP_DIR)
       file.save(fullFilePath)
       LOG_FILE = '%s/log-blender.txt' % EXP_DIR
 
@@ -336,13 +367,13 @@ def generateForHash(hash):
     #)
 
     zipCmd = 'cd static/generated/%s; pdflatex -interaction=nonstopmode report.tex; zip -r figures.zip *.png *.txt *.tex *.pdf' % hash
-    subprocess.Popen(
-      zipCmd,  # call something with a lot of output so we can see it
-      shell=True,
-      stdout=subprocess.PIPE,
-      universal_newlines=True
-    )
-    #os.system(zipCmd)
+    # subprocess.Popen(
+    #   zipCmd,  # call something with a lot of output so we can see it
+    #   shell=True,
+    #   stdout=subprocess.PIPE,
+    #   universal_newlines=True
+    # )
+    os.system(zipCmd)
 
     # if errorImgGen = 1, then some images could not be generated
     errorImgGen = request.args.get('error', None)
