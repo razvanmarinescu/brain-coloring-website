@@ -1,3 +1,4 @@
+
 install:
 	# clone repo of BrainPainter code
 	git clone https://github.com/mrazvan22/brain-coloring.git
